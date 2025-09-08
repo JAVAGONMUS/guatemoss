@@ -58,7 +58,7 @@ https://templatemo.com/tm-556-catalog-z
         </div>
     </nav>
 
-    <div class="tm-hero d-flex justify-content-center align-items-center" data-parallax="scroll" data-image-src="img/guatemoss2.jpg">
+    <div class="tm-hero d-flex justify-content-center align-items-center" data-parallax="scroll" data-image-src="img/hero.mp4">
         <form class="d-flex tm-search-form">
             <input class="form-control tm-search-input" type="search" placeholder="BUSCAR" aria-label="BUSCAR">
             <button class="btn btn-outline-success tm-search-btn" type="submit">
@@ -348,4 +348,5 @@ https://templatemo.com/tm-556-catalog-z
         });
     </script>
 </body>
+
 </html>
