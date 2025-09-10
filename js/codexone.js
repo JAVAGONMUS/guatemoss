@@ -9,7 +9,17 @@
 
 document.addEventListener('DOMContentLoaded', function() {
 
-    
+    document.getElementById("btnWhatsApp").addEventListener("click", function() {
+        // Número de WhatsApp en formato internacional
+        let telefono = "50251872106"; // cambia por el de tu empresa
+        let mensaje = "Hola GUATE MOSS S.A. quiero más información sobre sus productos.";
+
+        // Crear URL universal de WhatsApp
+        let url = "https://wa.me/" + telefono + "?text=" + encodeURIComponent(mensaje);
+
+        // Abrir en la misma pestaña
+        window.open(url, "_blank");
+    });
 
 
 
@@ -140,114 +150,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-    // =============================================
-    // LIGHTBOX PARA IMÁGENES/VIDEOS
-    // =============================================
-    const lightbox = document.createElement('div');
-    lightbox.className = 'lightbox';
-    lightbox.innerHTML = `
-        <span class="close-lightbox">&times;</span>
-        <div class="lightbox-media-container"></div>
-        <button class="lightbox-nav prev">&lt;</button>
-        <button class="lightbox-nav next">&gt;</button>
-    `;
-    document.body.appendChild(lightbox);
-
-    let currentMediaIndex = 0;
-    let mediaItems = [];
-
-    function openLightbox(content, index) {
-        const container = lightbox.querySelector('.lightbox-media-container');
-        container.innerHTML = '';
-        
-        // Clonamos el elemento para evitar conflictos
-        const mediaClone = content.cloneNode(true);
-        
-        // Si es video, activamos controles y autoplay
-        if (mediaClone.tagName === 'VIDEO') {
-            mediaClone.controls = true;
-            mediaClone.autoplay = true;
-            mediaClone.className = 'lightbox-video';
-        } else if (mediaClone.tagName === 'IFRAME') {
-            // Para YouTube, ajustamos tamaño
-            mediaClone.className = 'lightbox-video';
-            mediaClone.style.width = '80%';
-            mediaClone.style.height = '80%';
-        } else {
-            mediaClone.className = 'lightbox-content';
-        }
-        
-        container.appendChild(mediaClone);
-        lightbox.style.display = 'block';
-        document.body.style.overflow = 'hidden';
-        currentMediaIndex = index;
-    }
-
-    function closeLightbox() {
-        lightbox.style.display = 'none';
-        document.body.style.overflow = 'auto';
-        
-        // Pausar videos al cerrar
-        const videos = lightbox.querySelectorAll('video, iframe');
-        videos.forEach(video => {
-            if (video.tagName === 'VIDEO') {
-                video.pause();
-            } else if (video.tagName === 'IFRAME') {
-                // Detener videos de YouTube
-                video.src = video.src; // Esto recarga el iframe
-            }
-        });
-    }
-
-    function navigateLightbox(direction) {
-        currentMediaIndex += direction;
-        
-        if (currentMediaIndex >= mediaItems.length) currentMediaIndex = 0;
-        if (currentMediaIndex < 0) currentMediaIndex = mediaItems.length - 1;
-        
-        const mediaItem = mediaItems[currentMediaIndex];
-        const mediaElement = createMediaElement(mediaItem);
-        openLightbox(mediaElement, currentMediaIndex);
-    }
-
-    function createMediaElement(mediaItem) {
-        if (mediaItem.classList.contains('video-thumbnail')) {
-            const video = document.createElement('video');
-            video.src = mediaItem.querySelector('source').src;
-            video.controls = true;
-            return video;
-        } else if (mediaItem.tagName === 'IFRAME') {
-            const iframe = document.createElement('iframe');
-            iframe.src = mediaItem.src;
-            iframe.setAttribute('frameborder', '0');
-            iframe.setAttribute('allowfullscreen', '');
-            return iframe;
-        } else {
-            const img = document.createElement('img');
-            img.src = mediaItem.src;
-            return img;
-        }
-    }
-
-    // Eventos del lightbox
-    lightbox.querySelector('.close-lightbox').addEventListener('click', closeLightbox);
-    lightbox.addEventListener('click', function(e) {
-        if (e.target === lightbox) closeLightbox();
-    });
-
-    lightbox.querySelector('.prev').addEventListener('click', () => navigateLightbox(-1));
-    lightbox.querySelector('.next').addEventListener('click', () => navigateLightbox(1));
-
-    // Inicializar navegación con teclado
-    document.addEventListener('keydown', function(e) {
-        if (lightbox.style.display === 'block') {
-            if (e.key === 'Escape') closeLightbox();
-            if (e.key === 'ArrowLeft') navigateLightbox(-1);
-            if (e.key === 'ArrowRight') navigateLightbox(1);
-        }
-    });
-
-    
 
     // =============================================
     // VALIDACIÓN DE FORMULARIOS
@@ -333,4 +235,5 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('resize', adjustForScreenSize);
 
     console.log('Scripts cargados correctamente');
+
 });
