@@ -59,7 +59,7 @@ function getImagesByIds($ids) {
     if (empty($ids)) return [];
     
     $placeholders = implode(',', array_fill(0, count($ids), '?'));
-    $sql = "SELECT * FROM FOTOS WHERE ID_FOT IN ($placeholders)";
+    $sql = "SELECT * FROM FOTOSRUDY WHERE ID_FOT IN ($placeholders)";
     
     return executeQuery($sql, $ids);
 }
@@ -68,8 +68,8 @@ function getImagesByIds($ids) {
 function getProductosFiltrados($marca = null, $talla = null) {
     $sql = "SELECT c.*, m.UPC, m.DESCRIPCION, m.PRECIO, 
                    d.NOMBRE as DIVISION, dep.NOMBRE as DEPARTAMENTO, cat.NOMBRE as CATEGORIA
-            FROM CATALOGO c
-            JOIN MERCADERIA m ON c.ID_PROD = m.ID_PROD
+            FROM CATALOGORUDY c
+            JOIN MERCADERIARUDY m ON c.ID_PROD = m.ID_PROD
             JOIN DIVISION d ON m.ID_DIV = d.ID_DIV
             JOIN DEPARTAMENTO dep ON m.ID_DEP = dep.ID_DEP
             JOIN CATEGORIA cat ON m.ID_CAT = cat.ID_CAT
@@ -98,8 +98,8 @@ function getProductosFiltrados($marca = null, $talla = null) {
 function getAllProductos() {
     $sql = "SELECT c.*, m.UPC, m.DESCRIPCION, m.PRECIO, 
                    d.NOMBRE as DIVISION, dep.NOMBRE as DEPARTAMENTO, cat.NOMBRE as CATEGORIA
-            FROM CATALOGO c
-            JOIN MERCADERIA m ON c.ID_PROD = m.ID_PROD
+            FROM CATALOGORUDY c
+            JOIN MERCADERIARUDY m ON c.ID_PROD = m.ID_PROD
             JOIN DIVISION d ON m.ID_DIV = d.ID_DIV
             JOIN DEPARTAMENTO dep ON m.ID_DEP = dep.ID_DEP
             JOIN CATEGORIA cat ON m.ID_CAT = cat.ID_CAT
@@ -112,8 +112,8 @@ function getAllProductos() {
 function getProductoById($id) {
     $sql = "SELECT c.*, m.UPC, m.DESCRIPCION, m.PRECIO, 
                    d.NOMBRE as DIVISION, dep.NOMBRE as DEPARTAMENTO, cat.NOMBRE as CATEGORIA
-            FROM CATALOGO c
-            JOIN MERCADERIA m ON c.ID_PROD = m.ID_PROD
+            FROM CATALOGORUDY c
+            JOIN MERCADERIARUDY m ON c.ID_PROD = m.ID_PROD
             JOIN DIVISION d ON m.ID_DIV = d.ID_DIV
             JOIN DEPARTAMENTO dep ON m.ID_DEP = dep.ID_DEP
             JOIN CATEGORIA cat ON m.ID_CAT = cat.ID_CAT
@@ -125,15 +125,40 @@ function getProductoById($id) {
 
 // Función para insertar una nueva imagen
 function insertarImagen($nombre, $contenido, $tipo_mime, $url_video, $user_new_data) {
-    $sql = "INSERT INTO FOTOS (NOMBRE, FOTO, TIPO_MIME, URL_VIDEO, FECHA_ALTA, HORA_ALTA, USER_NEW_DATA) 
+    $sql = "INSERT INTO FOTOSRUDY (NOMBRE, FOTO, TIPO_MIME, URL_VIDEO, FECHA_ALTA, HORA_ALTA, USER_NEW_DATA) 
             VALUES (?, ?, ?, ?, CURDATE(), CURTIME(), ?)";
     return executeQuery($sql, [$nombre, $contenido, $tipo_mime, $url_video, $user_new_data]);
 }
 
 // Función para obtener el próximo ID de FOTOS
 function getNextFotoId() {
-    $sql = "SELECT MAX(ID_FOT) as max_id FROM FOTOS";
+    $sql = "SELECT MAX(ID_FOT) as max_id FROM FOTOSRUDY";
     $result = executeQuery($sql);
     return ($result[0]['max_id'] ?? 0) + 1;
 }
+
+// Función para obtener el total de productos en CATALOGO
+function SaberMaximoCatalogo() {
+    $sql = "SELECT COUNT(*) as total FROM CATALOGORUDY";
+    $result = executeQuery($sql);
+    return ($result[0]['total'] ?? 0) ;
+}
+
+// Función para obtener los productos de la respectiva pagina
+function MostrarSoloPagina($offset, $productosPorPagina) {
+
+    $sql = "SELECT c.*, m.UPC, m.DESCRIPCION, m.PRECIO, 
+                   d.NOMBRE as DIVISION, dep.NOMBRE as DEPARTAMENTO, cat.NOMBRE as CATEGORIA
+            FROM CATALOGORUDY c
+            JOIN MERCADERIARUDY m ON c.ID_PROD = m.ID_PROD
+            JOIN DIVISION d ON m.ID_DIV = d.ID_DIV
+            JOIN DEPARTAMENTO dep ON m.ID_DEP = dep.ID_DEP
+            JOIN CATEGORIA cat ON m.ID_CAT = cat.ID_CAT
+            ORDER BY cat.NOMBRE, c.TALLA_USS 
+            LIMIT ?,?
+            ";            
+    
+    return executeQuery($sql,[$offset,$productosPorPagina]);
+}
+
 ?>
