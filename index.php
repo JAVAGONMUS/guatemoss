@@ -6,6 +6,27 @@ $archivo_actual = basename(__FILE__);
 if ($archivo_actual == basename($_SERVER["SCRIPT_FILENAME"]) && $archivo_actual != 'index.php') {
     die("Acceso denegado.");
 }
+
+$productos = getAllProductos();                        
+// Cantidad de productos por página (puedes cambiarlo a 10, 12, etc.)
+$productosPorPagina = 12;
+// Página actual (por defecto la 1)
+$pagina = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
+if ($pagina < 1) $pagina = 1;
+
+// Calcular desde qué registro empezar
+$offset = ($pagina - 1) * $productosPorPagina;
+
+// Consultar el total de productos
+$totalProductos = SaberMaximoCatalogo();
+
+// Calcular total de páginas
+$totalPaginas = ceil($totalProductos / $productosPorPagina);
+
+// Traer solo los productos de la página actual
+$query = MostrarSoloPagina($offset, $productosPorPagina);
+
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -19,6 +40,7 @@ if ($archivo_actual == basename($_SERVER["SCRIPT_FILENAME"]) && $archivo_actual 
 	<meta name="copyright" content="GUATE MOSS S.A.">
 	<meta name="robots" content="index">
     <title>GUATE MOSS</title>
+    <script src="js/codexone.js"></script>
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="fontawesome/css/all.min.css">
     <link rel="stylesheet" href="css/templatemo-style.css">
@@ -45,27 +67,34 @@ https://templatemo.com/tm-556-catalog-z
                 <i class="fas fa-film mr-2"></i>
                 CATALOGO GUATE MOSS S.A.
             </a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <i class="fas fa-bars"></i>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ml-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link nav-link-4" href="contact.html">CONTACTO</a>
-                </li>
+                <button id="btnWhatsApp">💬 Escríbenos</button>
+                <button onclick="window.open('js/newpicture.php', '_blank')">AGREGAR</button>
             </ul>
-            </div>
+            
         </div>
     </nav>
 
-    <div class="tm-hero d-flex justify-content-center align-items-center" data-parallax="scroll" data-image-src="img/hero.mp4">
-        <form class="d-flex tm-search-form">
-            <input class="form-control tm-search-input" type="search" placeholder="BUSCAR" aria-label="BUSCAR">
+    <div class="tm-hero d-flex justify-content-center align-items-center" id="tm-video-container">
+        <video autoplay muted loop id="tm-video">
+            <source src="video/hero.mp4" type="video/mp4">
+        </video>  
+        <i id="tm-video-control-button" class="fas fa-pause"></i>
+        <form action="js/buscar.php" method="get" class="d-flex position-absolute tm-search-form">
+            <input class="form-control tm-search-input" type="search" placeholder="BUSCAR PRODUCTO" aria-label="Search">
             <button class="btn btn-outline-success tm-search-btn" type="submit">
                 <i class="fas fa-search"></i>
             </button>
         </form>
     </div>
+
+
+
+
+
+
+
+
 
     <div class="container-fluid tm-container-content tm-mt-60">
         <div class="row mb-4">
@@ -74,234 +103,82 @@ https://templatemo.com/tm-556-catalog-z
             </h2>
             <div class="col-6 d-flex justify-content-end align-items-center">
                 <form action="" class="tm-text-primary">
-                    Pagina <input type="text" value="1" size="1" class="tm-input-paging tm-text-primary"> de 200
+                    Pagina <input type="text" value="<?php echo $pagina ?>" size="1" class="tm-input-paging tm-text-primary" readonly> de <?php echo $totalPaginas; ?>
                 </form>
             </div>
         </div>
+
+
+
+
         <div class="row tm-mb-90 tm-gallery">
-        	<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-5">
-                <figure class="effect-ming tm-video-item">
-                    <img src="img/img-03.jpg" alt="Image" class="img-fluid">
-                    <figcaption class="d-flex align-items-center justify-content-center">
-                        <h2>Clocks</h2>
-                        <a href="photo-detail.php">View more</a>
-                    </figcaption>                    
-                </figure>
-                <div class="d-flex justify-content-between tm-text-gray">
-                    <span class="tm-text-gray-light">18 Oct 2020</span>
-                    <span>9,906 views</span>
-                </div>
-            </div>
-            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-5">
-                <figure class="effect-ming tm-video-item">
-                    <img src="img/img-04.jpg" alt="Image" class="img-fluid">
-                    <figcaption class="d-flex align-items-center justify-content-center">
-                        <h2>Plants</h2>
-                        <a href="photo-detail.php">View more</a>
-                    </figcaption>                    
-                </figure>
-                <div class="d-flex justify-content-between tm-text-gray">
-                    <span class="tm-text-gray-light">14 Oct 2020</span>
-                    <span>16,100 views</span>
-                </div>
-            </div>
-            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-5">
-                <figure class="effect-ming tm-video-item">
-                    <img src="img/img-05.jpg" alt="Image" class="img-fluid">
-                    <figcaption class="d-flex align-items-center justify-content-center">
-                        <h2>Morning</h2>
-                        <a href="photo-detail.php">View more</a>
-                    </figcaption>                    
-                </figure>
-                <div class="d-flex justify-content-between tm-text-gray">
-                    <span class="tm-text-gray-light">12 Oct 2020</span>
-                    <span>12,460 views</span>
-                </div>
-            </div>
-            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-5">
-                <figure class="effect-ming tm-video-item">
-                    <img src="img/img-06.jpg" alt="Image" class="img-fluid">
-                    <figcaption class="d-flex align-items-center justify-content-center">
-                        <h2>Pinky</h2>
-                        <a href="photo-detail.php">View more</a>
-                    </figcaption>                    
-                </figure>
-                <div class="d-flex justify-content-between tm-text-gray">
-                    <span class="tm-text-gray-light">10 Oct 2020</span>
-                    <span>11,402 views</span>
-                </div>
-            </div>
-            
-            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-5">
-                <figure class="effect-ming tm-video-item">
-                    <img src="img/img-01.jpg" alt="Image" class="img-fluid">
-                    <figcaption class="d-flex align-items-center justify-content-center">
-                        <h2>Hangers</h2>
-                        <a href="photo-detail.php">View more</a>
-                    </figcaption>                    
-                </figure>
-                <div class="d-flex justify-content-between tm-text-gray">
-                    <span class="tm-text-gray-light">24 Sep 2020</span>
-                    <span>16,008 views</span>
-                </div>
-            </div>
-            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-5">
-                <figure class="effect-ming tm-video-item">
-                    <img src="img/img-02.jpg" alt="Image" class="img-fluid">
-                    <figcaption class="d-flex align-items-center justify-content-center">
-                        <h2>Perfumes</h2>
-                        <a href="photo-detail.php">View more</a>
-                    </figcaption>                    
-                </figure>
-                <div class="d-flex justify-content-between tm-text-gray">
-                    <span class="tm-text-gray-light">20 Sep 2020</span>
-                    <span>12,860 views</span>
-                </div>
-            </div>
-            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-5">
-                <figure class="effect-ming tm-video-item">
-                    <img src="img/img-07.jpg" alt="Image" class="img-fluid">
-                    <figcaption class="d-flex align-items-center justify-content-center">
-                        <h2>Bus</h2>
-                        <a href="photo-detail.php">View more</a>
-                    </figcaption>                    
-                </figure>
-                <div class="d-flex justify-content-between tm-text-gray">
-                    <span class="tm-text-gray-light">16 Sep 2020</span>
-                    <span>10,900 views</span>
-                </div>
-            </div>
-            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-5">
-                <figure class="effect-ming tm-video-item">
-                    <img src="img/img-08.jpg" alt="Image" class="img-fluid">
-                    <figcaption class="d-flex align-items-center justify-content-center">
-                        <h2>New York</h2>
-                        <a href="photo-detail.php">View more</a>
-                    </figcaption>                    
-                </figure>
-                <div class="d-flex justify-content-between tm-text-gray">
-                    <span class="tm-text-gray-light">12 Sep 2020</span>
-                    <span>11,300 views</span>
-                </div>
-            </div>
-            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-5">
-                <figure class="effect-ming tm-video-item">
-                    <img src="img/img-09.jpg" alt="Image" class="img-fluid">
-                    <figcaption class="d-flex align-items-center justify-content-center">
-                        <h2>Abstract</h2>
-                        <a href="photo-detail.php">View more</a>
-                    </figcaption>                    
-                </figure>
-                <div class="d-flex justify-content-between tm-text-gray">
-                    <span class="tm-text-gray-light">10 Sep 2020</span>
-                    <span>42,700 views</span>
-                </div>
-            </div>
-            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-5">
-                <figure class="effect-ming tm-video-item">
-                    <img src="img/img-10.jpg" alt="Image" class="img-fluid">
-                    <figcaption class="d-flex align-items-center justify-content-center">
-                        <h2>Flowers</h2>
-                        <a href="photo-detail.php">View more</a>
-                    </figcaption>                    
-                </figure>
-                <div class="d-flex justify-content-between tm-text-gray">
-                    <span class="tm-text-gray-light">8 Sep 2020</span>
-                    <span>11,402 views</span>
-                </div>
-            </div>
-            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-5">
-                <figure class="effect-ming tm-video-item">
-                    <img src="img/img-11.jpg" alt="Image" class="img-fluid">
-                    <figcaption class="d-flex align-items-center justify-content-center">
-                        <h2>Rosy</h2>
-                        <a href="photo-detail.php">View more</a>
-                    </figcaption>                    
-                </figure>
-                <div class="d-flex justify-content-between tm-text-gray">
-                    <span class="tm-text-gray-light">4 Sep 2020</span>
-                    <span>32,906 views</span>
-                </div>
-            </div>
-            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-5">
-                <figure class="effect-ming tm-video-item">
-                    <img src="img/img-12.jpg" alt="Image" class="img-fluid">
-                    <figcaption class="d-flex align-items-center justify-content-center">
-                        <h2>Rocki</h2>
-                        <a href="photo-detail.php">View more</a>
-                    </figcaption>                    
-                </figure>
-                <div class="d-flex justify-content-between tm-text-gray">
-                    <span class="tm-text-gray-light">28 Aug 2020</span>
-                    <span>50,700 views</span>
-                </div>
-            </div>
-            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-5">
-                <figure class="effect-ming tm-video-item">
-                    <img src="img/img-13.jpg" alt="Image" class="img-fluid">
-                    <figcaption class="d-flex align-items-center justify-content-center">
-                        <h2>Purple</h2>
-                        <a href="photo-detail.php">View more</a>
-                    </figcaption>                    
-                </figure>
-                <div class="d-flex justify-content-between tm-text-gray">
-                    <span class="tm-text-gray-light">22 Aug 2020</span>
-                    <span>107,510 views</span>
-                </div>
-            </div>
-            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-5">
-                <figure class="effect-ming tm-video-item">
-                    <img src="img/img-14.jpg" alt="Image" class="img-fluid">
-                    <figcaption class="d-flex align-items-center justify-content-center">
-                        <h2>Sea</h2>
-                        <a href="photo-detail.php">View more</a>
-                    </figcaption>                    
-                </figure>
-                <div class="d-flex justify-content-between tm-text-gray">
-                    <span class="tm-text-gray-light">14 Aug 2020</span>
-                    <span>118,006 views</span>
-                </div>
-            </div>
-            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-5">
-                <figure class="effect-ming tm-video-item">
-                    <img src="img/img-15.jpg" alt="Image" class="img-fluid">
-                    <figcaption class="d-flex align-items-center justify-content-center">
-                        <h2>Turtle</h2>
-                        <a href="photo-detail.php">View more</a>
-                    </figcaption>                    
-                </figure>
-                <div class="d-flex justify-content-between tm-text-gray">
-                    <span class="tm-text-gray-light">9 Aug 2020</span>
-                    <span>121,300 views</span>
-                </div>
-            </div>
-            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-5">
-                <figure class="effect-ming tm-video-item">
-                    <img src="img/img-16.jpg" alt="Image" class="img-fluid">
-                    <figcaption class="d-flex align-items-center justify-content-center">
-                        <h2>Peace</h2>
-                        <a href="photo-detail.php">View more</a>
-                    </figcaption>                    
-                </figure>
-                <div class="d-flex justify-content-between tm-text-gray">
-                    <span class="tm-text-gray-light">3 Aug 2020</span>
-                    <span>21,204 views</span>
-                </div>
-            </div>         
+            <?php foreach ($query as $producto): ?>
+                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-5">           
+                    <figure class="effect-ming tm-video-item">
+                        <?php 
+                            $imagenes = getImagesByIds([$producto['ID_FOT']]);
+                            if (!empty($imagenes)) {
+                                $imagen = $imagenes[0];
+                                $src = 'data:' . $imagen['TIPO_MIME'] . ';base64,' . base64_encode($imagen['FOTO']);
+                                    
+                                if (strpos($imagen['TIPO_MIME'], 'video/') === 0) {
+                                    
+                                } else {
+                                    echo '<img src="' . $src . '" alt="Image" class="img-fluid">';
+                                }
+                            }
+                        ?>         
+                        <figcaption class="d-flex align-items-center justify-content-center">
+                            <h2>INFORMACION</h2>
+                            <a href="photo-detail.php?id=<?php echo $producto['ID_CATT']; ?>">View more</a>
+                        </figcaption>                    
+                    </figure>
+                    <div class="d-flex justify-content-between tm-text-gray">
+                        <span><?php echo htmlspecialchars($producto['DEPARTAMENTO']); ?>,<?php echo htmlspecialchars($producto['CATEGORIA']); ?></span>
+                        <span class="tm-text-gray-light">Q<?php echo number_format($producto['PRECIO_OFERTA'], 2); ?> * UNIDAD</span>
+                    </div>            
+                </div>   
+            <?php endforeach; ?>
         </div> <!-- row -->
+
+
+        <!-- Paginación -->
         <div class="row tm-mb-90">
             <div class="col-12 d-flex justify-content-between align-items-center tm-paging-col">
-                <a href="javascript:void(0);" class="btn btn-primary tm-btn-prev mb-2 disabled">ANTERIOR</a>
+                <!-- Botón Anterior -->
+                <?php if ($pagina > 1): ?>
+                    <a href="?pagina=<?php echo $pagina - 1; ?>" class="btn btn-primary tm-btn-prev mb-2 eneable">⟨ ANTERIOR</a>                   
+                <?php else: ?>
+                    <a class="btn btn-primary tm-btn-prev mb-2 disabled">⟨ ANTERIOR</a>
+                <?php endif; ?>
+
+                <!-- Números de página -->
                 <div class="tm-paging d-flex">
-                    <a href="javascript:void(0);" class="active tm-paging-link">1</a>
-                    <a href="javascript:void(0);" class="tm-paging-link">2</a>
-                    <a href="javascript:void(0);" class="tm-paging-link">3</a>
-                    <a href="javascript:void(0);" class="tm-paging-link">4</a>
+                    <?php for ($i = 1; $i <= $totalPaginas; $i++): ?>
+                        <a href="?pagina=<?php echo $i; ?>" class="<?php echo ($i == $pagina) ? 'active tm-paging-link' : 'tm-paging-link'; ?>">
+                            <?php echo $i; ?>
+                        </a>
+                    <?php endfor; ?>                       
                 </div>
-                <a href="javascript:void(0);" class="btn btn-primary tm-btn-next">SIGUIENTE</a>
-            </div>            
+                
+
+                <!-- Botón Siguiente -->
+                <?php if ($pagina < $totalPaginas): ?>
+                    <a href="?pagina=<?php echo $pagina + 1; ?>" class="btn btn-primary tm-btn-next eneable ">SIGUIENTE ⟩</a>                   
+                <?php else: ?>
+                    <a class="btn btn-primary tm-btn-next disabled ">SIGUIENTE ⟩</a>   
+                <?php endif; ?>
+            </div>  
         </div>
+
     </div> <!-- container-fluid, tm-container-content -->
+
+
+
+
+
+
+
 
     <footer class="tm-bg-gray pt-5 pb-3 tm-text-gray tm-footer">
         <div class="container-fluid tm-container-small">
@@ -321,9 +198,9 @@ https://templatemo.com/tm-556-catalog-z
                 </div>
                 <div class="col-lg-3 col-md-6 col-sm-6 col-12 px-5 mb-5">
                     <ul class="tm-social-links d-flex justify-content-end pl-0 mb-5">
-                        <li class="mb-2"><a href="https://www.facebook.com/profile.php?id=100093685280633"><i class="fab fa-facebook"></i></a></li>
+                        <li class="mb-2"><a href="https://www.facebook.com/profile.php?id=100093685280633" target="_blank"><i class="fab fa-facebook"></i></a></li>
                         
-                        <li class="mb-2"><a href="https://www.tiktok.com/@guatemos"><i class="fab fa-instagram"></i></a></li>
+                        <li class="mb-2"><a href="https://www.tiktok.com/@guatemos" target="_blank"><i class="fab fa-instagram"></i></a></li>
                         
                     </ul>
                     <a href="#" class="tm-text-gray text-right d-block mb-2"></a>
@@ -348,5 +225,4 @@ https://templatemo.com/tm-556-catalog-z
         });
     </script>
 </body>
-
 </html>
