@@ -65,12 +65,9 @@ function getImagesByIds($ids) {
 }
 
 // Función para obtener productos con filtros
-function getProductosFiltrados($marca = null, $talla = null) {
+function getProductosFiltradosTodos($marca = null, $talla = null) {
     $sql = "SELECT c.*, m.UPC, m.DESCRIPCION, m.PRECIO, 
                     d.NOMBRE as DIVISION, dep.NOMBRE as DEPARTAMENTO, cat.NOMBRE as CATEGORIA,
-                    d.ID_EMPR AS ID_EMRP_DIV,
-                    dep.ID_EMPR AS ID_EMPR_DEP,
-                    cat.ID_EMPR AS ID_EMPR_CAT
             FROM CATALOGO c
             JOIN MERCADERIA m ON c.ID_PROD = m.ID_PROD
             JOIN DIVISION d ON m.ID_DIV = d.ID_DIV
@@ -96,14 +93,52 @@ function getProductosFiltrados($marca = null, $talla = null) {
     
     return executeQuery($sql, $params);
 }
-
+// Función para obtener productos con filtros por empresa
+function getProductosFiltrados($id_empresa = null, $marca = null, $talla = null) {
+    $sql = "SELECT c.*, m.UPC, m.DESCRIPCION, m.PRECIO, 
+                   d.NOMBRE as DIVISION, dep.NOMBRE as DEPARTAMENTO, cat.NOMBRE as CATEGORIA
+            FROM CATALOGO c
+            JOIN MERCADERIA m ON c.ID_PROD = m.ID_PROD
+            JOIN DIVISION d ON m.ID_DIV = d.ID_DIV
+            JOIN DEPARTAMENTO dep ON m.ID_DEP = dep.ID_DEP
+            JOIN CATEGORIA cat ON m.ID_CAT = cat.ID_CAT
+            WHERE c.VENDIDO = 0";
+    
+    $params = [];
+    
+    // Filtro por empresa (si se proporciona)
+    if ($id_empresa !== null) {
+        $sql .= " AND EXISTS (
+                    SELECT 1 
+                    FROM DIVISION d2 
+                    WHERE d2.ID_DIV = d.ID_DIV 
+                    AND d2.ID_EMPR = :id_empresa
+                  )";
+        $params[':id_empresa'] = $id_empresa;
+    }
+    
+    // Filtro por marca (categoría)
+    if (!empty($marca)) {
+        $sql .= " AND cat.NOMBRE LIKE :marca";
+        $params[':marca'] = "%$marca%";
+    }
+    
+    // Filtro por talla
+    if (!empty($talla)) {
+        $sql .= " AND (c.TALLA_USS = :talla_uss OR c.TALLA_EUR = :talla_eur OR c.TALLA_CM = :talla_cm)";
+        $params[':talla'] = $talla;
+        $params[':talla'] = $talla;
+        $params[':talla'] = $talla;
+    }
+    
+    $sql .= " ORDER BY cat.NOMBRE, c.TALLA_USS";
+    
+    return executeQuery($sql, $params);
+}
 // Función para obtener todos los productos
-function getAllProductos() {
+function getAllProductosTodos() {
     $sql = "SELECT c.*, m.UPC, m.DESCRIPCION, m.PRECIO, 
                     d.NOMBRE as DIVISION, dep.NOMBRE as DEPARTAMENTO, cat.NOMBRE as CATEGORIA,
-                    d.ID_EMPR AS ID_EMRP_DIV,
-                    dep.ID_EMPR AS ID_EMPR_DEP,
-                    cat.ID_EMPR AS ID_EMPR_CAT
             FROM CATALOGO c
             JOIN MERCADERIA m ON c.ID_PROD = m.ID_PROD
             JOIN DIVISION d ON m.ID_DIV = d.ID_DIV
@@ -113,6 +148,28 @@ function getAllProductos() {
             ORDER BY cat.NOMBRE, c.TALLA_USS";
     
     return executeQuery($sql);
+}
+// Función para obtener todos los productos filtrados por empresa
+function getAllProductos($id_empresa = null) {
+    $sql = "SELECT c.*, m.UPC, m.DESCRIPCION, m.PRECIO, 
+                   d.NOMBRE as DIVISION, dep.NOMBRE as DEPARTAMENTO, cat.NOMBRE as CATEGORIA
+            FROM CATALOGO c
+            JOIN MERCADERIA m ON c.ID_PROD = m.ID_PROD
+            JOIN DIVISION d ON m.ID_DIV = d.ID_DIV
+            JOIN DEPARTAMENTO dep ON m.ID_DEP = dep.ID_DEP
+            JOIN CATEGORIA cat ON m.ID_CAT = cat.ID_CAT
+            WHERE c.VENDIDO = 0
+            AND EXISTS (
+                SELECT 1 
+                FROM DIVISION d2 
+                WHERE d2.ID_DIV = d.ID_DIV 
+                AND d2.ID_EMPR = :id_empresa
+            )
+            ORDER BY cat.NOMBRE, c.TALLA_USS";
+    
+    $params = [':id_empresa' => $id_empresa];
+    
+    return executeQuery($sql, $params);
 }
 
 // Función para obtener detalles de un producto
@@ -147,22 +204,33 @@ function getNextFotoId() {
     return ($result[0]['max_id'] ?? 0) + 1;
 }
 
-
 // Función para obtener el total de productos en CATALOGO
-function SaberMaximoCatalogo() {
+function SaberMaximoCatalogoTodos() {
     $sql = "SELECT COUNT(*) as total FROM CATALOGO";
     $result = executeQuery($sql);
     return ($result[0]['total'] ?? 0) ;
 }
 
+function SaberMaximoCatalogo($id_empresa=null) {
+    $sql = "SELECT COUNT(*) as total 
+            FROM CATALOGO c
+            WHERE EXISTS (
+                SELECT 1 FROM MERCADERIA m
+                INNER JOIN DIVISION d ON m.ID_DIV = d.ID_DIV
+                WHERE c.ID_PROD = m.ID_PROD
+                AND d.ID_EMPR = :id_empresa
+            )";
+    
+    $params = [':id_empresa' => $id_empresa];
+    $result = executeQuery($sql, $params);
+    return ($result[0]['total'] ?? 0);
+}
+
 // Función para obtener los productos de la respectiva pagina
-function MostrarSoloPagina($offset, $productosPorPagina) {
+function MostrarSoloPaginaTodos($offset, $productosPorPagina) {
 
     $sql = "SELECT c.*, m.UPC, m.DESCRIPCION, m.PRECIO, 
-                    d.NOMBRE as DIVISION, dep.NOMBRE as DEPARTAMENTO, cat.NOMBRE as CATEGORIA,
-                    d.ID_EMPR AS ID_EMRP_DIV,
-                    dep.ID_EMPR AS ID_EMPR_DEP,
-                    cat.ID_EMPR AS ID_EMPR_CAT
+                    d.NOMBRE as DIVISION, dep.NOMBRE as DEPARTAMENTO, cat.NOMBRE as CATEGORIA
             FROM CATALOGO c
             JOIN MERCADERIA m ON c.ID_PROD = m.ID_PROD
             JOIN DIVISION d ON m.ID_DIV = d.ID_DIV
@@ -173,6 +241,32 @@ function MostrarSoloPagina($offset, $productosPorPagina) {
             ";            
     
     return executeQuery($sql,[$offset,$productosPorPagina]);
+}
+// Función para obtener los productos de la respectiva pagina filtrados por empresa
+function MostrarSoloPagina($offset, $productosPorPagina, $id_empresa = null) {
+    $sql = "SELECT c.*, m.UPC, m.DESCRIPCION, m.PRECIO, 
+                   d.NOMBRE as DIVISION, dep.NOMBRE as DEPARTAMENTO, cat.NOMBRE as CATEGORIA
+            FROM CATALOGO c
+            JOIN MERCADERIA m ON c.ID_PROD = m.ID_PROD
+            JOIN DIVISION d ON m.ID_DIV = d.ID_DIV
+            JOIN DEPARTAMENTO dep ON m.ID_DEP = dep.ID_DEP
+            JOIN CATEGORIA cat ON m.ID_CAT = cat.ID_CAT
+            WHERE EXISTS (
+                SELECT 1 
+                FROM DIVISION d2 
+                WHERE d2.ID_DIV = d.ID_DIV 
+                AND d2.ID_EMPR = :id_empresa
+            )
+            ORDER BY cat.NOMBRE
+            LIMIT :offset, :limit";
+    
+    $params = [
+        ':id_empresa' => $id_empresa,
+        ':offset' => (int)$offset, 
+        ':limit' => (int)$productosPorPagina
+    ];
+    
+    return executeQuery($sql, $params);
 }
 
 ?>
