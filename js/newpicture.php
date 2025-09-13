@@ -7,6 +7,8 @@ if ($archivo_actual == basename($_SERVER["SCRIPT_FILENAME"]) && $archivo_actual 
     die("Acceso denegado.");
 }
 
+$EMPR = "2";
+
 // Configuración para archivos grandes
 ini_set('upload_max_filesize', '50M');
 ini_set('post_max_size', '50M');
@@ -28,9 +30,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $url_embed = $youtube_url;
                     $youtube_url = 'YOUTUBE.COM';
                     try {
-                        $sql = "INSERT INTO FOTOS (NOMBRE, FOTO, TIPO_MIME, URL_VIDEO, FECHA_ALTA, HORA_ALTA, USER_NEW_DATA) 
-                                VALUES (?, NULL, 'video/webm', ?, CURDATE(), CURTIME(), '0')";
-                        executeQuery($sql, [$youtube_url, $url_embed]);
+                        $sql = "INSERT INTO FOTOS (ID_EMPR, NOMBRE, FOTO, TIPO_MIME, URL_VIDEO, FECHA_ALTA, HORA_ALTA, USER_NEW_DATA) 
+                                VALUES (?, ?, NULL, 'video/webm', ?, CURDATE(), CURTIME(), '1')";
+                        executeQuery($sql, [$EMPR, $youtube_url, $url_embed]);
                         $mensaje = "✅ Enlace de YouTube guardado correctamente!";
                     } catch (Exception $e) {
                         $error = "❌ Error al guardar en BD: " . $e->getMessage();
@@ -59,9 +61,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (in_array($tipo_mime, $tipos_permitidos)) {
             try {
                 $contenido = file_get_contents($temp_path);
-                $sql = "INSERT INTO FOTOS (NOMBRE, FOTO, TIPO_MIME, URL_VIDEO, FECHA_ALTA, HORA_ALTA, USER_NEW_DATA) 
-                        VALUES (?, ?, ?, '-', CURDATE(), CURTIME(), '0')";
-                executeQuery($sql, [$nombre, $contenido, $tipo_mime]);
+                $sql = "INSERT INTO FOTOS (ID_EMPR, NOMBRE, FOTO, TIPO_MIME, URL_VIDEO, FECHA_ALTA, HORA_ALTA, USER_NEW_DATA) 
+                        VALUES (?, ?, ?, ?, '-', CURDATE(), CURTIME(), '1')";
+                executeQuery($sql, [$EMPR, $nombre, $contenido, $tipo_mime]);
                 $mensaje = "✅ Archivo subido correctamente! ID: " . getLastInsertId();
             } catch (Exception $e) {
                 $error = "❌ Error al subir archivo: " . $e->getMessage();
@@ -135,18 +137,19 @@ function getLastInsertId() {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="../img/guatemosslogo.ico">
-    <title>Subir Contenido - Catálogo de Calzado</title>
-    <link rel="stylesheet" href="../css/stylesone.css">
+    <link rel="icon" href="img/guatemosslogo.ico">
+    <title>Subir Miscelanea</title>
+    <script src="js/codexone.js"></script>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="css/templatemo-style.css">
 </head>
 <body>
     <header>
         <h1>Agregar Nuevo Contenido</h1>
     </header>
     
-    <nav>
-        <button onclick="window.history.back()">← Volver</button>
-    </nav>
+    
     
     <main class="form-container">
         <?php if ($mensaje): ?>
@@ -157,30 +160,40 @@ function getLastInsertId() {
             <div class="mensaje error"><?php echo htmlspecialchars($error); ?></div>
         <?php endif; ?>
         
-        <form action="../watch/newpicture.php" method="post" enctype="multipart/form-data">
+        <form action="newpicture.php" method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="imagen">Subir archivo (imagen o video):</label>
                 <input type="file" id="imagen" name="imagen" accept="image/*,video/*">
-                <small>Formatos aceptados: JPG, PNG, GIF, MP4, WEBM (Máx. 50MB)</small>
-            </div>
+                <small>Formatos aceptados: JPG, PNG, GIF, MP4, WEBM (Máx. 25MB)</small>
+            </div><br><br>
             
-            <div class="separador">O</div>
+            <div class="separador">O</div><br><br>
             
             <div class="form-group">
                 <label for="youtube_url">Enlace de YouTube:</label>
                 <input type="text" id="youtube_url" name="youtube_url" 
                        placeholder="Ej: https://youtu.be/dQw4w9WgXcQ">
                 <small>Ejemplos válidos: youtu.be/ID o youtube.com/watch?v=ID</small>
-            </div>
+            </div><br><br><br>
             
-            <button type="submit" class="btn-submit">Guardar Contenido</button>
+            <button type="submit" class="btn-submit">Guardar Contenido</button><br><br>
         </form>
     </main>
     
-    <footer>
-        <p>&copy; <?php echo date('Y'); ?> Catálogo de Calzado</p>
+    <footer class="tm-bg-gray pt-5 pb-3 tm-text-gray tm-footer">
+        <div class="container-fluid tm-container-small">
+            
+            <div class="row">
+                <div class="col-lg-8 col-md-7 col-12 px-5 mb-3"> &copy; <?php echo date('Y'); ?> 
+                     Catálogo de GUATE MOSS S.A. Todos los derechos reservados.
+                </div>
+                <div class="col-lg-4 col-md-5 col-12 px-5 text-right">
+                    <a href="https://templatemo.com" class="tm-text-gray" rel="sponsored" target="_parent"></a>
+                </div>
+            </div>
+        </div>
     </footer>
     
-    <script src="../logic/codexone.js"></script>
+    <script src="codexone.js"></script>
 </body>
 </html>
