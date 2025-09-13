@@ -7,6 +7,9 @@ if ($archivo_actual == basename($_SERVER["SCRIPT_FILENAME"]) && $archivo_actual 
     die("Acceso denegado.");
 }
 
+$EMPR = "2";
+$existenciasP = false;
+
 $productos = getAllProductos();                        
 // Cantidad de productos por página (puedes cambiarlo a 10, 12, etc.)
 $productosPorPagina = 12;
@@ -25,7 +28,6 @@ $totalPaginas = ceil($totalProductos / $productosPorPagina);
 
 // Traer solo los productos de la página actual
 $query = MostrarSoloPagina($offset, $productosPorPagina);
-
 
 ?>
 <!DOCTYPE html>
@@ -68,29 +70,38 @@ https://templatemo.com/tm-556-catalog-z
                 CATALOGO GUATE MOSS S.A.
             </a>
             <ul class="navbar-nav ml-auto mb-2 mb-lg-0">
-                <button id="btnWhatsApp">💬 Escríbenos</button>
                 <button onclick="window.open('js/newpicture.php', '_blank')">AGREGAR</button>
+                <button id="btnWhatsApp">💬 Escríbenos</button>                
             </ul>
             
         </div>
     </nav>
 
-    <div class="tm-hero d-flex justify-content-center align-items-center" id="tm-video-container">
+    <div class="tm-hero d-flex justify-content-center align-items-center" id="tm-video-container"   >
         <video autoplay muted loop id="tm-video">
             <source src="video/hero.mp4" type="video/mp4">
         </video>  
         <i id="tm-video-control-button" class="fas fa-pause"></i>
+
         <form action="js/buscar.php" method="get" class="d-flex position-absolute tm-search-form">
-            <input class="form-control tm-search-input" type="search" placeholder="BUSCAR PRODUCTO" aria-label="Search">
-            <button class="btn btn-outline-success tm-search-btn" type="submit">
+            <div class="form-group">
+                <input class="form-control" type="text" id="articulo" name="articulo" placeholder="PRODUCTOS"> 
+            </div>  
+            <div class="form-group">                 
+                <input class="form-control" type="text" id="marca" name="marca" placeholder="MARCAS">
+            </div>  
+            <button class="form-group" type="submit">
                 <i class="fas fa-search"></i>
             </button>
         </form>
+        
     </div>
 
 
 
-
+    
+        
+    
 
 
 
