@@ -70,7 +70,6 @@ https://templatemo.com/tm-556-catalog-z
                 CATALOGO GUATE MOSS S.A.
             </a>
             <ul class="navbar-nav ml-auto mb-2 mb-lg-0">
-                <button onclick="window.open('js/newpicture.php', '_blank')">AGREGAR</button>
                 <button id="btnWhatsApp">💬 Escríbenos</button>                
             </ul>
             
