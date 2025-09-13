@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Crear URL universal de WhatsApp
         let url = "https://wa.me/" + telefono + "?text=" + encodeURIComponent(mensaje);
 
-        // Abrir en la misma pestaña
+        // Abrir en otra pestaña
         window.open(url, "_blank");
     });
 
@@ -189,15 +189,7 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
     });
 
-    document.addEventListener('keydown', function(e) {
-        // Deshabilitar F12, Ctrl+Shift+I, Ctrl+Shift+C, Ctrl+U
-        if (e.key === 'F12' || 
-            (e.ctrlKey && e.shiftKey && e.key === 'I') || 
-            (e.ctrlKey && e.shiftKey && e.key === 'C') || 
-            (e.ctrlKey && e.key === 'U')) {
-            e.preventDefault();
-        }
-    });
+    
 
     // Ajustar elementos según tamaño de pantalla
     function adjustForScreenSize() {
