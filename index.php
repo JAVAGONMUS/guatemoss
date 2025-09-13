@@ -7,10 +7,10 @@ if ($archivo_actual == basename($_SERVER["SCRIPT_FILENAME"]) && $archivo_actual 
     die("Acceso denegado.");
 }
 
-$EMPR = "2";
+$EMPR = 2;
 $existenciasP = false;
 
-$productos = getAllProductos();                        
+$productos = getAllProductos($EMPR);                        
 // Cantidad de productos por página (puedes cambiarlo a 10, 12, etc.)
 $productosPorPagina = 12;
 // Página actual (por defecto la 1)
@@ -21,13 +21,13 @@ if ($pagina < 1) $pagina = 1;
 $offset = ($pagina - 1) * $productosPorPagina;
 
 // Consultar el total de productos
-$totalProductos = SaberMaximoCatalogo();
+$totalProductos = SaberMaximoCatalogo($EMPR);
 
 // Calcular total de páginas
 $totalPaginas = ceil($totalProductos / $productosPorPagina);
 
 // Traer solo los productos de la página actual
-$query = MostrarSoloPagina($offset, $productosPorPagina);
+$query = MostrarSoloPagina($offset, $productosPorPagina,$EMPR);
 
 ?>
 <!DOCTYPE html>
