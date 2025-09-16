@@ -46,13 +46,6 @@ $query = MostrarSoloPagina($offset, $productosPorPagina,$EMPR);
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="fontawesome/css/all.min.css">
     <link rel="stylesheet" href="css/templatemo-style.css">
-<!--
-    
-TemplateMo 556 Catalog-Z
-
-https://templatemo.com/tm-556-catalog-z
-
--->
 </head>
 <body >
     <!-- Page Loader -->
@@ -72,7 +65,7 @@ https://templatemo.com/tm-556-catalog-z
     
     
 
-    <nav class="navbar navbar-expand-lg">
+    <nav>
         <div class="container-fluid">
             <a class="navbar-brand" href="#">
                 <i class="fas fa-film mr-2"></i>
@@ -107,11 +100,11 @@ https://templatemo.com/tm-556-catalog-z
         <form action="js/buscar.php" method="get" class="d-flex position-absolute search-form">
             <label for="marca">Marca:  </label>
             <div class="form-group">                
-                <input class="form-control"type="text" id="marca" name="marca" placeholder="guess,coach,disney...">
+                <input class="form-control"type="text" id="marca" name="marca" placeholder="coach...">
             </div>
             <label for="articulo">Producto:  </label>
             <div class="form-group">                
-                <input class="form-control" type="text" id="articulo" name="articulo" placeholder="cartera,cross body...">
+                <input class="form-control" type="text" id="articulo" name="articulo" placeholder="cross body...">
             </div>
             
             <button class="form-group" type="submit">
