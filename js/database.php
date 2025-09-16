@@ -7,6 +7,7 @@ define('DB_USER', getenv('MYSQLUSER') ?: 'root');
 define('DB_PASS', getenv('MYSQLPASSWORD') ?: 'JRVMHEVvCjiiYNJetQIWQQIelcrMBTcm');
 define('DB_NAME', getenv('MYSQLDATABASE') ?: 'railway');
 
+
 // Función para obtener conexión a la base de datos
 function getDBConnection() {
     static $conn = null;
@@ -67,7 +68,7 @@ function getImagesByIds($ids) {
 // Función para obtener productos con filtros
 function getProductosFiltradosTodos($marca = null, $talla = null) {
     $sql = "SELECT c.*, m.UPC, m.DESCRIPCION, m.PRECIO, 
-                    d.NOMBRE as DIVISION, dep.NOMBRE as DEPARTAMENTO, cat.NOMBRE as CATEGORIA,
+                    d.NOMBRE as DIVISION, dep.NOMBRE as DEPARTAMENTO, cat.NOMBRE as CATEGORIA
             FROM CATALOGO c
             JOIN MERCADERIA m ON c.ID_PROD = m.ID_PROD
             JOIN DIVISION d ON m.ID_DIV = d.ID_DIV
@@ -94,7 +95,7 @@ function getProductosFiltradosTodos($marca = null, $talla = null) {
     return executeQuery($sql, $params);
 }
 // Función para obtener productos con filtros por empresa
-function getProductosFiltrados($id_empresa = null, $marca = null, $talla = null) {
+function getProductosFiltrados($id_empresa = null, $marca = null, $articulo = null) {
     $sql = "SELECT c.*, m.UPC, m.DESCRIPCION, m.PRECIO, 
                    d.NOMBRE as DIVISION, dep.NOMBRE as DEPARTAMENTO, cat.NOMBRE as CATEGORIA
             FROM CATALOGO c
@@ -123,15 +124,14 @@ function getProductosFiltrados($id_empresa = null, $marca = null, $talla = null)
         $params[':marca'] = "%$marca%";
     }
     
-    // Filtro por talla
-    if (!empty($talla)) {
-        $sql .= " AND (c.TALLA_USS = :talla_uss OR c.TALLA_EUR = :talla_eur OR c.TALLA_CM = :talla_cm)";
-        $params[':talla'] = $talla;
-        $params[':talla'] = $talla;
-        $params[':talla'] = $talla;
+    // Filtro por tipo de producto (division)
+    if (!empty($articulo)) {
+        $sql .= " AND d.NOMBRE LIKE :articulo";
+        $params[':articulo'] = "%$articulo%";
     }
+
     
-    $sql .= " ORDER BY cat.NOMBRE, c.TALLA_USS";
+    $sql .= " ORDER BY cat.NOMBRE, d.NOMBRE";
     
     return executeQuery($sql, $params);
 }
