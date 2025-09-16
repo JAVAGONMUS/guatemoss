@@ -158,11 +158,11 @@ document.addEventListener('DOMContentLoaded', function() {
     if (searchForm) {
         searchForm.addEventListener('submit', function(e) {
             const marca = document.getElementById('marca').value.trim();
-            const talla = document.getElementById('talla').value.trim();
+            const articulo = document.getElementById('articulo').value.trim();
             
-            if (!marca && !talla) {
+            if (!marca && !articulo) {
                 e.preventDefault();
-                alert('Por favor ingresa al menos un criterio de búsqueda (marca o talla)');
+                alert('Ingresa un criterio de búsqueda (producto o marca)');
             }
         });
     }
