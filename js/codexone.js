@@ -132,25 +132,6 @@ document.addEventListener('DOMContentLoaded', function() {
     mo.observe(document.documentElement, { childList: true, subtree: true });
     
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     // =============================================
     // VALIDACIÓN DE FORMULARIOS
     // =============================================
@@ -158,11 +139,11 @@ document.addEventListener('DOMContentLoaded', function() {
     if (searchForm) {
         searchForm.addEventListener('submit', function(e) {
             const marca = document.getElementById('marca').value.trim();
-            const articulo = document.getElementById('articulo').value.trim();
+            const talla = document.getElementById('talla').value.trim();
             
-            if (!marca && !articulo) {
+            if (!marca && !talla) {
                 e.preventDefault();
-                alert('Ingresa un criterio de búsqueda (producto o marca)');
+                alert('Por favor ingresa al menos un criterio de búsqueda (marca o talla)');
             }
         });
     }
@@ -189,7 +170,15 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
     });
 
-    
+    document.addEventListener('keydown', function(e) {
+        // Deshabilitar F12, Ctrl+Shift+I, Ctrl+Shift+C, Ctrl+U
+        if (e.key === 'F12' || 
+            (e.ctrlKey && e.shiftKey && e.key === 'I') || 
+            (e.ctrlKey && e.shiftKey && e.key === 'C') || 
+            (e.ctrlKey && e.key === 'U')) {
+            e.preventDefault();
+        }
+    });
 
     // Ajustar elementos según tamaño de pantalla
     function adjustForScreenSize() {
