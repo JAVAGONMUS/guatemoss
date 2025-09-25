@@ -55,101 +55,24 @@ function executeQuery($sql, $params = []) {
     }
 }
 
-// Función para obtener imágenes por IDs
-function getImagesByIds($ids) {
-    if (empty($ids)) return [];
-    
-    $placeholders = implode(',', array_fill(0, count($ids), '?'));
-    $sql = "SELECT * FROM FOTOS WHERE ID_FOT IN ($placeholders)";
-    
-    return executeQuery($sql, $ids);
-}
 
-// Función para obtener productos con filtros
-function getProductosFiltradosTodos($marca = null, $talla = null) {
-    $sql = "SELECT c.*, m.UPC, m.DESCRIPCION, m.PRECIO, 
-                    d.NOMBRE as DIVISION, dep.NOMBRE as DEPARTAMENTO, cat.NOMBRE as CATEGORIA
-            FROM CATALOGO c
-            JOIN MERCADERIA m ON c.ID_PROD = m.ID_PROD
-            JOIN DIVISION d ON m.ID_DIV = d.ID_DIV
-            JOIN DEPARTAMENTO dep ON m.ID_DEP = dep.ID_DEP
-            JOIN CATEGORIA cat ON m.ID_CAT = cat.ID_CAT
-            WHERE c.VENDIDO = 0";
-    
-    $params = [];
-    
-    if (!empty($marca)) {
-        $sql .= " AND cat.NOMBRE LIKE ?";
-        $params[] = "%$marca%";
-    }
-    
-    if (!empty($talla)) {
-        $sql .= " AND (c.TALLA_USS = ? OR c.TALLA_EUR = ? OR c.TALLA_CM = ?)";
-        $params[] = $talla;
-        $params[] = $talla;
-        $params[] = $talla;
-    }
-    
-    $sql .= " ORDER BY cat.NOMBRE, c.TALLA_USS";
-    
-    return executeQuery($sql, $params);
-}
-// Función para obtener productos con filtros por empresa
-function getProductosFiltrados($id_empresa = null, $marca = null, $articulo = null) {
-    $sql = "SELECT c.*, m.UPC, m.DESCRIPCION, m.PRECIO, 
-                   d.NOMBRE as DIVISION, dep.NOMBRE as DEPARTAMENTO, cat.NOMBRE as CATEGORIA
-            FROM CATALOGO c
-            JOIN MERCADERIA m ON c.ID_PROD = m.ID_PROD
-            JOIN DIVISION d ON m.ID_DIV = d.ID_DIV
-            JOIN DEPARTAMENTO dep ON m.ID_DEP = dep.ID_DEP
-            JOIN CATEGORIA cat ON m.ID_CAT = cat.ID_CAT
-            WHERE c.VENDIDO = 0";
-    
-    $params = [];
-    
-    // Filtro por empresa (si se proporciona)
-    if ($id_empresa !== null) {
-        $sql .= " AND EXISTS (
-                    SELECT 1 
-                    FROM DIVISION d2 
-                    WHERE d2.ID_DIV = d.ID_DIV 
-                    AND d2.ID_EMPR = :id_empresa
-                  )";
-        $params[':id_empresa'] = $id_empresa;
-    }
-    
-    // Filtro por marca (categoría)
-    if (!empty($marca)) {
-        $sql .= " AND cat.NOMBRE LIKE :marca";
-        $params[':marca'] = "%$marca%";
-    }
-    
-    // Filtro por tipo de producto (division)
-    if (!empty($articulo)) {
-        $sql .= " AND d.NOMBRE LIKE :articulo";
-        $params[':articulo'] = "%$articulo%";
-    }
 
-    
-    $sql .= " ORDER BY cat.NOMBRE, d.NOMBRE";
-    
-    return executeQuery($sql, $params);
-}
-// Función para obtener todos los productos
-function getAllProductosTodos() {
-    $sql = "SELECT c.*, m.UPC, m.DESCRIPCION, m.PRECIO, 
-                    d.NOMBRE as DIVISION, dep.NOMBRE as DEPARTAMENTO, cat.NOMBRE as CATEGORIA,
-            FROM CATALOGO c
-            JOIN MERCADERIA m ON c.ID_PROD = m.ID_PROD
-            JOIN DIVISION d ON m.ID_DIV = d.ID_DIV
-            JOIN DEPARTAMENTO dep ON m.ID_DEP = dep.ID_DEP
-            JOIN CATEGORIA cat ON m.ID_CAT = cat.ID_CAT
-            WHERE c.VENDIDO = 0
-            ORDER BY cat.NOMBRE, c.TALLA_USS";
-    
-    return executeQuery($sql);
-}
-// Función para obtener todos los productos filtrados por empresa
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Función para obtener todos los productos filtrados por empresa de la Base de Datos
 function getAllProductos($id_empresa = null) {
     $sql = "SELECT c.*, m.UPC, m.DESCRIPCION, m.PRECIO, 
                    d.NOMBRE as DIVISION, dep.NOMBRE as DEPARTAMENTO, cat.NOMBRE as CATEGORIA
@@ -171,7 +94,115 @@ function getAllProductos($id_empresa = null) {
     
     return executeQuery($sql, $params);
 }
+// Función para buscar productos con filtros y exclusión de IDs
+function buscarProductosFiltrados($filtros, $excluirIds = []) {
+    $sql = "SELECT c.*, m.UPC, m.DESCRIPCION, m.PRECIO, 
+                   d.NOMBRE as DIVISION, dep.NOMBRE as DEPARTAMENTO, cat.NOMBRE as CATEGORIA
+            FROM CATALOGO c
+            JOIN MERCADERIA m ON c.ID_PROD = m.ID_PROD
+            JOIN DIVISION d ON m.ID_DIV = d.ID_DIV
+            JOIN DEPARTAMENTO dep ON m.ID_DEP = dep.ID_DEP
+            JOIN CATEGORIA cat ON m.ID_CAT = cat.ID_CAT
+            WHERE c.VENDIDO = 0";
+    
+    $params = [];
+    
+    // Aplicar filtros
+    if (!empty($filtros['id_cat'])) {
+        $sql .= " AND m.ID_CAT = :id_cat";
+        $params[':id_cat'] = $filtros['id_cat'];
+    }
+    
+    if (!empty($filtros['id_dep'])) {
+        $sql .= " AND m.ID_DEP = :id_dep";
+        $params[':id_dep'] = $filtros['id_dep'];
+    }
+    
+    if (!empty($filtros['id_div'])) {
+        $sql .= " AND m.ID_DIV = :id_div";
+        $params[':id_div'] = $filtros['id_div'];
+    }
+    
+    // Excluir IDs ya encontrados (usando parámetros nombrados)
+    if (!empty($excluirIds)) {
+        $placeholders = [];
+        foreach ($excluirIds as $index => $id) {
+            $paramName = ':excluir_' . $index;
+            $placeholders[] = $paramName;
+            $params[$paramName] = $id;
+        }
+        $sql .= " AND c.ID_CATT NOT IN (" . implode(',', $placeholders) . ")";
+    }
+    
+    $sql .= " ORDER BY cat.NOMBRE, d.NOMBRE";
+    
+    return executeQuery($sql, $params);
+}
+// Función para depuración (opcional)
+function debugBusqueda($resultados) {
+    echo "<pre>";
+    echo "IDs excluidos en cada paso:\n";
+    // Puedes agregar más información de depuración aquí
+    print_r($resultados);
+    echo "</pre>";
+}
 
+
+
+
+
+
+
+
+
+
+
+
+
+// Función para obtener todas las divisiones filtradas por empresa desde la Base de Datos
+function getDivisionesByEmpresa($id_empresa) {
+    $sql = "SELECT ID_DIV, NOMBRE 
+        FROM DIVISION 
+        WHERE ID_EMPR = :id_empresa
+        ORDER BY NOMBRE";
+    $params = [':id_empresa' => $id_empresa];    
+    return executeQuery($sql, $params);
+}
+// Función para obtener todas las categorias filtradas por empresa desde la Base de Datos
+function getCategoriasByEmpresa($id_empresa) {
+    $sql = "SELECT ID_CAT, NOMBRE 
+        FROM CATEGORIA 
+        WHERE ID_EMPR = :id_empresa
+        ORDER BY NOMBRE";
+    $params = [':id_empresa' => $id_empresa];    
+    return executeQuery($sql, $params);
+}
+// Función para obtener todos los departamentos filtradas por empresa desde la Base de Datos
+function getDepartamentosByEmpresa($id_empresa) {
+    $sql = "SELECT ID_DEP, NOMBRE 
+        FROM DEPARTAMENTO 
+        WHERE ID_EMPR = :id_empresa
+        ORDER BY NOMBRE";
+    $params = [':id_empresa' => $id_empresa];    
+    return executeQuery($sql, $params);
+}
+
+
+
+
+
+
+
+
+// Función para obtener imágenes por IDs
+function getImagesByIds($ids) {
+    if (empty($ids)) return [];
+    
+    $placeholders = implode(',', array_fill(0, count($ids), '?'));
+    $sql = "SELECT * FROM FOTOS WHERE ID_FOT IN ($placeholders)";
+    
+    return executeQuery($sql, $ids);
+}
 // Función para obtener detalles de un producto
 function getProductoById($id) {
     $sql = "SELECT c.*, m.UPC, m.DESCRIPCION, m.PRECIO, 
@@ -189,14 +220,12 @@ function getProductoById($id) {
     $result = executeQuery($sql, [$id]);
     return $result[0] ?? null;
 }
-
 // Función para insertar una nueva imagen
 function insertarImagen($EMPR, $nombre, $contenido, $tipo_mime, $url_video, $user_new_data) {
     $sql = "INSERT INTO FOTOS (ID_EMPR, NOMBRE, FOTO, TIPO_MIME, URL_VIDEO, FECHA_ALTA, HORA_ALTA, USER_NEW_DATA) 
             VALUES (?, ?, ?, ?, ?, CURDATE(), CURTIME(), ?)";
     return executeQuery($sql, [$EMPR, $nombre, $contenido, $tipo_mime, $url_video, $user_new_data]);
 }
-
 // Función para obtener el próximo ID de FOTOS
 function getNextFotoId() {
     $sql = "SELECT MAX(ID_FOT) as max_id FROM FOTOS";
@@ -204,13 +233,25 @@ function getNextFotoId() {
     return ($result[0]['max_id'] ?? 0) + 1;
 }
 
-// Función para obtener el total de productos en CATALOGO
+
+
+
+
+
+
+
+
+
+
+
+
+// Función para obtener el total de productos en la tabla CATALOGO
 function SaberMaximoCatalogoTodos() {
     $sql = "SELECT COUNT(*) as total FROM CATALOGO";
     $result = executeQuery($sql);
     return ($result[0]['total'] ?? 0) ;
 }
-
+// Función para obtener el total de productos de una sola empresa en la tabla CATALOGO
 function SaberMaximoCatalogo($id_empresa=null) {
     $sql = "SELECT COUNT(*) as total 
             FROM CATALOGO c
@@ -268,5 +309,4 @@ function MostrarSoloPagina($offset, $productosPorPagina, $id_empresa = null) {
     
     return executeQuery($sql, $params);
 }
-
 ?>
