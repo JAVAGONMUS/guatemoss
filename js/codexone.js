@@ -1,5 +1,5 @@
 /**
- * scripts.js - Funcionalidades principales del catálogo
+ * codexone.js - Funcionalidades principales del catálogo
  * Contempla:
  * - Lightbox para imágenes/videos
  * - Validación de formularios
@@ -139,11 +139,11 @@ document.addEventListener('DOMContentLoaded', function() {
     if (searchForm) {
         searchForm.addEventListener('submit', function(e) {
             const marca = document.getElementById('marca').value.trim();
-            const talla = document.getElementById('talla').value.trim();
+            const articulo = document.getElementById('articulo').value.trim();
             
-            if (!marca && !talla) {
+            if (!marca && !articulo) {
                 e.preventDefault();
-                alert('Por favor ingresa al menos un criterio de búsqueda (marca o talla)');
+                alert('Ingresa "marca o producto" para buscar');
             }
         });
     }
@@ -207,6 +207,26 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 5000);
         }
     }
+    
+
+    // Al cargar la página
+    window.onload = function() {
+        // Guardar estado en el historial
+        window.history.pushState(null, null, window.location.href);
+        
+        // Controlar el botón atrás
+        window.addEventListener('popstate', function(event) {
+            // Limpiar todos los formularios
+            document.querySelectorAll('form').forEach(form => form.reset());
+            
+            // Volver a la página actual
+            window.history.pushState(null, null, window.location.href);
+        });
+    };
+
+
+
+
 
     // =============================================
     // INICIALIZACIÓN
