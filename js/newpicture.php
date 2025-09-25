@@ -1,4 +1,6 @@
 <?php
+// admin.php
+session_start();
 
 require_once 'database.php';
 
@@ -71,8 +73,10 @@ function getLastInsertId() {
 }
 
 
-// admin.php
-session_start();
+
+
+
+
 
 // Configuración
 $password_correcto = "guatemoss"; // Cambia por tu contraseña
