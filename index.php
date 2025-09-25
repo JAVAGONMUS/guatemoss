@@ -1,4 +1,5 @@
 <?php
+session_start(); // siempre la primera línea antes de cualquier HTML
 require_once 'js/database.php';
 
 // Protección modificada para permitir acceso directo solo a index.php
@@ -41,8 +42,7 @@ $query = MostrarSoloPagina($offset, $productosPorPagina,$EMPR);
 	<meta name="author" content="GUATE MOSS S.A.">
 	<meta name="copyright" content="GUATE MOSS S.A.">
 	<meta name="robots" content="index">
-    <title>GUATE MOSS</title>
-    <script src="js/codexone.js"></script>
+    <title>GUATE MOSS</title>    
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="fontawesome/css/all.min.css">
     <link rel="stylesheet" href="css/templatemo-style.css">
@@ -51,23 +51,18 @@ $query = MostrarSoloPagina($offset, $productosPorPagina,$EMPR);
     <!-- Page Loader -->
     <div id="loader-wrapper">
         <div id="loader"></div>
-
         <div class="loader-section section-left"></div>
         <div class="loader-section section-right"></div>
-
     </div>
     <div class="tm-hero d-flex justify-content-center align-items-center" id="tm-video-container"   >
         <video autoplay muted loop id="tm-video">
             <source src="video/hero.mp4" type="video/mp4">
         </video>  
         <i id="tm-video-control-button" class="fas fa-pause"></i>        
-    </div>
-    
-    
-
+    </div>    
     <nav>
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="#" onclick="location.reload(true); return false;">
                 <i class="fas fa-film mr-2"></i>
                 CATALOGO GUATE MOSS S.A.
             </a>        
@@ -97,16 +92,15 @@ $query = MostrarSoloPagina($offset, $productosPorPagina,$EMPR);
     
 
     <div class="tm-hero d-flex justify-content-center align-items-center" >
-        <form action="js/buscar.php" method="get" class="d-flex position-absolute search-form">
-            <label for="marca">Marca:  </label>
+        <form action="js/buscar.php" method="POST" class="d-flex position-absolute search-form" id="searchForm">
+            <label for="articulo">Productos -</label>
             <div class="form-group">                
-                <input class="form-control"type="text" id="marca" name="marca" placeholder="coach...">
+                <input class="form-control" autocomplete="off" oninput="this.value = this.value.toUpperCase()" type="text" id="articulo" name="articulo" placeholder="cartera...">
             </div>
-            <label for="articulo">Producto:  </label>
+            <label for="marca">Marcas -</label>
             <div class="form-group">                
-                <input class="form-control" type="text" id="articulo" name="articulo" placeholder="cross body...">
-            </div>
-            
+                <input class="form-control" autocomplete="off" oninput="this.value = this.value.toUpperCase()" type="text" id="marca" name="marca" placeholder="coach...">
+            </div>                        
             <button class="form-group" type="submit">
                 <i class="fas fa-search"></i>
             </button>       
@@ -158,11 +152,11 @@ $query = MostrarSoloPagina($offset, $productosPorPagina,$EMPR);
                         ?>         
                         <figcaption class="d-flex align-items-center justify-content-center">
                             <h2>INFORMACION</h2>
-                            <a href="photo-detail.php?id=<?php echo $producto['ID_CATT']; ?>">View more</a>
+                            <a href="js/photo-detail.php?id=<?php echo $producto['ID_CATT']; ?>">View more</a>
                         </figcaption>                    
                     </figure>
                     <div class="d-flex justify-content-between tm-text-gray">
-                        <span><?php echo htmlspecialchars($producto['DEPARTAMENTO']); ?>,<?php echo htmlspecialchars($producto['CATEGORIA']); ?></span>
+                        <span><?php echo htmlspecialchars($producto['DIVISION']); ?>,<?php echo htmlspecialchars($producto['CATEGORIA']); ?></span>
                         <span class="tm-text-gray-light">Q<?php echo number_format($producto['PRECIO_OFERTA'], 2); ?> * UNIDAD</span>
                     </div>            
                 </div>   
@@ -170,7 +164,7 @@ $query = MostrarSoloPagina($offset, $productosPorPagina,$EMPR);
         </div> <!-- row -->
 
 
-        <!-- Paginación -->
+        <!-- Paginación de la PAGINA -->
         <div class="row tm-mb-90">
             <div class="col-12 d-flex justify-content-between align-items-center tm-paging-col">
                 <!-- Botón Anterior -->
@@ -198,15 +192,14 @@ $query = MostrarSoloPagina($offset, $productosPorPagina,$EMPR);
                 <?php endif; ?>
             </div>  
         </div>
-
     </div> <!-- container-fluid, tm-container-content -->
 
-
-
-
-
-
-
+    <!-- Paginación del SISTEMA -->
+    <?php
+        $_SESSION['D3BuscarArticulo'] = "";
+        $_SESSION['D4BuscarTipo'] = "";
+        $_SESSION['D5BuscarMarca'] = "";
+    ?>
 
     <footer class="tm-bg-gray pt-5 pb-3 tm-text-gray tm-footer">
         <div class="container-fluid tm-container-small">
@@ -225,6 +218,7 @@ $query = MostrarSoloPagina($offset, $productosPorPagina,$EMPR);
             $('body').addClass('loaded');
         });
     </script>
-    
+    <script src="js/codexone.js"></script>
+    <script src="js/codextwo.js"></script>
 </body>
 </html>
