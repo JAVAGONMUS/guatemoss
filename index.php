@@ -30,6 +30,7 @@ $totalPaginas = ceil($totalProductos / $productosPorPagina);
 // Traer solo los productos de la página actual
 $query = MostrarSoloPagina($offset, $productosPorPagina,$EMPR);
 
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -131,6 +132,7 @@ $query = MostrarSoloPagina($offset, $productosPorPagina,$EMPR);
         </div>
 
 
+                    
 
 
         <div class="row tm-mb-90 tm-gallery">
