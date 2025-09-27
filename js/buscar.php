@@ -234,7 +234,7 @@ $excluirIds = [];
                             count($resultados['solo_articulo']) + 
                             count($resultados['solo_marca']);
                         
-        echo "<h3>Total de productos encontrados: $totalProductos</h3>";
+        //echo "<h3>Total de productos encontrados: $totalProductos</h3>";
         // Calcular total de páginas
         $totalPaginas = ceil($totalProductos / $productosPorPagina);
         //debugBusqueda($resultados);
