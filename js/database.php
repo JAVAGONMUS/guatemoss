@@ -7,7 +7,6 @@ define('DB_USER', getenv('MYSQLUSER') ?: 'root');
 define('DB_PASS', getenv('MYSQLPASSWORD') ?: 'JRVMHEVvCjiiYNJetQIWQQIelcrMBTcm');
 define('DB_NAME', getenv('MYSQLDATABASE') ?: 'railway');
 
-
 // Función para obtener conexión a la base de datos
 function getDBConnection() {
     static $conn = null;
