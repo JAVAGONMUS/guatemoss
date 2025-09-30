@@ -65,13 +65,8 @@ function obtenerIdYoutube($url) {
     <link rel="stylesheet" href="../fontawesome/css/all.min.css">
     <link rel="stylesheet" href="../css/templatemo-style.css">
 </head>
-<body>
-    <!-- Page Loader -->
-    <div id="loader-wrapper">
-        <div id="loader"></div>
-        <div class="loader-section section-left"></div>
-        <div class="loader-section section-right"></div>
-    </div>    
+<body style="background-color:  #080705;">
+       
     <div class="tm-hero d-flex justify-content-center align-items-center" id="tm-video-container"   >
         <video autoplay muted loop id="tm-video">
             <source src="../video/hero.mp4" type="video/mp4">
@@ -159,7 +154,7 @@ function obtenerIdYoutube($url) {
                 ?> 
             </div>
             <div class="col-xl-4 col-lg-5 col-md-6 col-sm-12">
-                <div class="tm-bg-gray tm-video-details">   
+                <div class="tm-bg-gray tm-video-details" style="background-color:  #e4c4ffff;">   
 
                     <div>
                         <?php if (!empty($producto['DESCRIPCION'])): ?>
@@ -207,9 +202,19 @@ function obtenerIdYoutube($url) {
                         <br>
                     </div>
 
+
+
+
+
+
                     <div class="text-center mb-5">
                         <a href="#" class="btn btn-primary tm-btn-big">DESCARGAR PRODUCTOS</a>
                     </div>
+
+
+
+
+
 
                 </div>
             </div>
