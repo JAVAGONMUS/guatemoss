@@ -1,0 +1,243 @@
+* {
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+
+h1 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #555;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border 0.3s;
+}
+
+input:focus, select:focus {
+    border-color: #4a90e2;
+    outline: none;
+    box-shadow: 0 0 5px rgba(74, 144, 226, 0.3);
+}
+
+.readonly {
+    background-color: #f9f9f9;
+    color: #666;
+}
+
+.file-input-container {
+    margin-bottom: 15px;
+    padding: 15px;
+    border: 1px dashed #ddd;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.preview-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.image-preview {
+    width: 100px;
+    height: 100px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background-color: #f9f9f9;
+}
+
+.image-preview img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.image-preview .placeholder {
+    color: #999;
+    font-size: 12px;
+    text-align: center;
+    padding: 10px;
+}
+
+.main-image-label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 14px;
+    color: #555;
+    cursor: pointer;
+}
+
+.main-image-radio {
+    width: auto;
+}
+
+.remove-file-btn {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 14px;
+    align-self: flex-start;
+}
+
+.remove-file-btn:hover {
+    background-color: #c0392b;
+}
+
+.add-file-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+.add-file-btn:hover {
+    background-color: #45a049;
+}
+
+.youtube-url-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.youtube-url-input {
+    flex: 1;
+}
+
+.remove-youtube-btn {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.remove-youtube-btn:hover {
+    background-color: #c0392b;
+}
+
+.add-youtube-btn {
+    background-color: #ff9800;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+.add-youtube-btn:hover {
+    background-color: #e68900;
+}
+
+.submit-btn {
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    display: block;
+    width: 100%;
+    margin-top: 20px;
+    transition: background-color 0.3s;
+}
+
+.submit-btn:hover {
+    background-color: #3a7bc8;
+}
+
+.error-message {
+    color: #e74c3c;
+    font-size: 14px;
+    margin-top: 5px;
+    display: none;
+}
+
+.success-message {
+    color: #2ecc71;
+    font-size: 14px;
+    margin-top: 5px;
+    display: none;
+}
+
+.flex-container {
+    display: flex;
+    gap: 15px;
+}
+
+.flex-item {
+    flex: 1;
+}
+
+.status-input {
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+    .flex-container {
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    .preview-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .file-input-container {
+        padding: 10px;
+    }
+}
