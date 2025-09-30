@@ -79,13 +79,7 @@ $excluirIds = [];
     <link rel="stylesheet" href="../fontawesome/css/all.min.css">
     <link rel="stylesheet" href="../css/templatemo-style.css">
 </head>
-<body>
-    <!-- Page Loader -->
-    <div id="loader-wrapper">
-        <div id="loader"></div>
-        <div class="loader-section section-left"></div>
-        <div class="loader-section section-right"></div>
-    </div>
+<body style="background-color:  #080705;">
     
     <div class="tm-hero d-flex justify-content-center align-items-center" id="tm-video-container"   >
         <video autoplay muted loop id="tm-video">
