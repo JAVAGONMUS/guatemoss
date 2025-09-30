@@ -48,7 +48,7 @@ $query = MostrarSoloPagina($offset, $productosPorPagina,$EMPR);
     <link rel="stylesheet" href="fontawesome/css/all.min.css">
     <link rel="stylesheet" href="css/templatemo-style.css">
 </head>
-<body >
+<body style="background-color:  #080705;">
     <!-- Page Loader -->
     <div id="loader-wrapper">
         <div id="loader"></div>
