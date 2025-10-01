@@ -1,28 +1,22 @@
 <?php
-require_once 'database.php';
+require_once "database.php"; // 📌 Importa tus funciones de conexión
 
-// 🔹 Validar datos recibidos
+// 📌 Validar datos recibidos
 if (empty($_POST['ids']) || empty($_POST['id_empr'])) {
     die("No se recibieron parámetros válidos");
 }
 
 $idEmpresa = intval($_POST['id_empr']);
-$FullPic = $_POST['ids'];
-
-// 🔹 Convertir la cadena de IDs en array y limpiar
-$ids = array_filter(array_map('intval', explode(",", $FullPic)));
+$ids = array_filter(explode(",", $_POST['ids'])); 
 
 if (count($ids) === 0) {
-    die("No se recibieron IDs válidos de fotos");
+    die("No se recibieron IDs de fotos");
 }
 
-// 🔹 Crear placeholders dinámicos para PDO
+// 📌 Crear placeholders dinámicos (?, ?, ?)
 $placeholders = implode(",", array_fill(0, count($ids), "?"));
 
-// 🔹 Preparar parámetros para PDO (IDs + ID_EMPR)
-$params = array_merge($ids, [$idEmpresa]);
-
-// 🔹 Consulta segura: solo imágenes
+// 📌 Construir consulta segura
 $sql = "
     SELECT ID_FOT, NOMBRE, FOTO, TIPO_MIME
     FROM FOTOS
@@ -31,21 +25,24 @@ $sql = "
       AND TIPO_MIME LIKE 'image/%'
 ";
 
-// 🔹 Ejecutar consulta
+// 📌 Preparar parámetros (IDs + empresa)
+$params = array_merge($ids, [$idEmpresa]);
+
+// 📌 Ejecutar consulta con tu helper
 $fotos = executeQuery($sql, $params);
 
 if (empty($fotos)) {
     die("No se encontraron fotos para descargar.");
 }
 
-// 🔹 Crear archivo ZIP temporal
+// 📦 Crear archivo ZIP temporal
 $zipFile = tempnam(sys_get_temp_dir(), 'fotos') . ".zip";
 $zip = new ZipArchive();
 if ($zip->open($zipFile, ZipArchive::CREATE) !== TRUE) {
     die("No se pudo crear el archivo ZIP");
 }
 
-// 🔹 Agregar imágenes con nombre limpio
+// ➕ Agregar imágenes con su nombre real
 foreach ($fotos as $row) {
     $fileName = preg_replace('/[^A-Za-z0-9_\-\.]/', '_', $row['NOMBRE']); 
     $zip->addFromString($fileName, $row['FOTO']); // FOTO es el BLOB
@@ -53,13 +50,13 @@ foreach ($fotos as $row) {
 
 $zip->close();
 
-// 🔹 Forzar descarga del ZIP
+// 📥 Forzar descarga del ZIP
 header("Content-Type: application/zip");
 header("Content-Disposition: attachment; filename=fotos_catalogo.zip");
 header("Content-Length: " . filesize($zipFile));
 readfile($zipFile);
 
-// 🔹 Eliminar archivo temporal
+// 🗑️ Eliminar temporal
 unlink($zipFile);
 exit;
 ?>
