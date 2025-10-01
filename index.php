@@ -94,11 +94,11 @@ $query = MostrarSoloPagina($offset, $productosPorPagina,$EMPR);
 
     <div class="tm-hero d-flex justify-content-center align-items-center" >
         <form action="js/buscar.php" method="POST" class="d-flex position-absolute search-form" id="searchForm">
-            <label for="articulo">Productos -</label>
+            <label for="articulo">Productos</label>
             <div class="form-group">                
                 <input class="form-control" autocomplete="off" oninput="this.value = this.value.toUpperCase()" type="text" id="articulo" name="articulo" placeholder="cartera...">
             </div>
-            <label for="marca">Marcas -</label>
+            <label for="marca">Marcas</label>
             <div class="form-group">                
                 <input class="form-control" autocomplete="off" oninput="this.value = this.value.toUpperCase()" type="text" id="marca" name="marca" placeholder="coach...">
             </div>                        
