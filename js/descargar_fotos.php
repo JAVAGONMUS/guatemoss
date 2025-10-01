@@ -7,9 +7,29 @@ if (empty($_POST['ids']) || empty($_POST['id_empr'])) {
 }
 
 $idEmpresa = intval($_POST['id_empr']);
-var_dump($idEmpresa);
-$ids = array_filter(explode(",", $_POST['ids'])); 
-var_dump($ids);
+
+$FullPic = $_POST['FullPic'] ?? '';
+$idsArray = [];
+
+// Debug: ver qué está llegando
+if (empty($FullPic)) {
+    die("⚠️ No se recibió ningún ID en FullPic");
+}
+
+// Si llega ya como array (caso raro)
+if (is_array($FullPic)) {
+    $idsArray = array_map('intval', $FullPic);
+} else {
+    // Si llega como string separado por comas
+    $idsArray = array_filter(array_map('intval', explode(',', $FullPic)));
+}
+
+// Debug opcional (solo en pruebas, no en producción)
+var_dump($FullPic);
+var_dump($idsArray);
+
+
+
 
 if (count($ids) === 0) {
     die("No se recibieron IDs de fotos");
@@ -62,4 +82,5 @@ readfile($zipFile);
 unlink($zipFile);
 exit;
 ?>
+
 
