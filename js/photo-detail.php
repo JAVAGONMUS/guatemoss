@@ -103,11 +103,11 @@ function obtenerIdYoutube($url) {
     </nav>
     <div class="tm-hero d-flex justify-content-center align-items-center" >
         <form action="buscar.php" method="POST" class="d-flex position-absolute search-form" id="searchForm">
-            <label for="articulo">Productos -</label>
+            <label for="articulo">Productos</label>
             <div class="form-group">                
                 <input class="form-control" autocomplete="off" oninput="this.value = this.value.toUpperCase()" type="text" id="articulo" name="articulo" placeholder="cartera...">
             </div>
-            <label for="marca">Marcas -</label>
+            <label for="marca">Marcas</label>
             <div class="form-group">                
                 <input class="form-control" autocomplete="off" oninput="this.value = this.value.toUpperCase()" type="text" id="marca" name="marca" placeholder="coach...">
             </div>                        
@@ -204,12 +204,15 @@ function obtenerIdYoutube($url) {
 
 
 
+                        
+                    <form action="descargar_fotos.php" method="post" class="text-center mb-5">
+                        <input type="hidden" name="ids" value="<?php echo $FullPic; ?>">
+                        <input type="hidden" name="id_empr" value="<?php echo $EMPR; ?>">
+                        <button type="submit" class="btn btn-primary tm-btn-big">📥 Descargar fotos</button>
+                    </form>
 
-
-
-                    <div class="text-center mb-5">
-                        <a href="#" class="btn btn-primary tm-btn-big">DESCARGAR PRODUCTOS</a>
-                    </div>
+                    
+                    
 
 
 
