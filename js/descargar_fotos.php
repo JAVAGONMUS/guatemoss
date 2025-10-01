@@ -7,7 +7,9 @@ if (empty($_POST['ids']) || empty($_POST['id_empr'])) {
 }
 
 $idEmpresa = intval($_POST['id_empr']);
+var_dump($idEmpresa);
 $ids = array_filter(explode(",", $_POST['ids'])); 
+var_dump($ids);
 
 if (count($ids) === 0) {
     die("No se recibieron IDs de fotos");
@@ -60,3 +62,4 @@ readfile($zipFile);
 unlink($zipFile);
 exit;
 ?>
+
