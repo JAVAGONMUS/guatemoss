@@ -8,24 +8,24 @@ if (empty($_POST['ids']) || empty($_POST['id_empr'])) {
 
 $idEmpresa = intval($_POST['id_empr']);
 
-$FullPic = $_POST['FullPic'] ?? '';
+$ids = $_POST['ids'] ?? '';
 $idsArray = [];
 
 // Debug: ver qué está llegando
-if (empty($FullPic)) {
-    die("⚠️ No se recibió ningún ID en FullPic");
+if (empty($ids)) {
+    die("⚠️ No se recibió ningún ID en ids");
 }
 
 // Si llega ya como array (caso raro)
-if (is_array($FullPic)) {
-    $idsArray = array_map('intval', $FullPic);
+if (is_array($ids)) {
+    $idsArray = array_map('intval', $ids);
 } else {
     // Si llega como string separado por comas
-    $idsArray = array_filter(array_map('intval', explode(',', $FullPic)));
+    $idsArray = array_filter(array_map('intval', explode(',', $ids)));
 }
 
 // Debug opcional (solo en pruebas, no en producción)
-var_dump($FullPic);
+var_dump($ids);
 var_dump($idsArray);
 
 
