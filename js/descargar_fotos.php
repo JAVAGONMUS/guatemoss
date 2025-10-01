@@ -31,12 +31,12 @@ var_dump($idsArray);
 
 
 
-if (count($ids) === 0) {
+if (count(idsArray) === 0) {
     die("No se recibieron IDs de fotos");
 }
 
 // 📌 Crear placeholders dinámicos (?, ?, ?)
-$placeholders = implode(",", array_fill(0, count($ids), "?"));
+$placeholders = implode(",", array_fill(0, count(idsArray), "?"));
 
 // 📌 Construir consulta segura
 $sql = "
@@ -48,7 +48,7 @@ $sql = "
 ";
 
 // 📌 Preparar parámetros (IDs + empresa)
-$params = array_merge($ids, [$idEmpresa]);
+$params = array_merge(idsArray, [$idEmpresa]);
 
 // 📌 Ejecutar consulta con tu helper
 $fotos = executeQuery($sql, $params);
@@ -82,5 +82,6 @@ readfile($zipFile);
 unlink($zipFile);
 exit;
 ?>
+
 
 
