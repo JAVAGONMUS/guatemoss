@@ -48,7 +48,7 @@ $sql = "
 ";
 
 // 📌 Preparar parámetros (IDs + empresa)
-$params = array_merge(idsArray, [$idEmpresa]);
+$params = array_merge($idsArray, [$idEmpresa]);
 
 // 📌 Ejecutar consulta con tu helper
 $fotos = executeQuery($sql, $params);
@@ -82,6 +82,7 @@ readfile($zipFile);
 unlink($zipFile);
 exit;
 ?>
+
 
 
 
