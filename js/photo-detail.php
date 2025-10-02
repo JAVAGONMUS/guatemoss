@@ -204,7 +204,6 @@ function obtenerIdYoutube($url) {
 
 
 
-                     <?php $FUllPic = "665,666,667,668,669,670,671,672,673"?>
                     <form action="descargar_fotos.php" method="post" class="text-center mb-5">
                         <input type="hidden" name="ids" value="<?php echo $FullPic; ?>">
                         <input type="hidden" name="id_empr" value="<?php echo $EMPR; ?>">
@@ -309,4 +308,5 @@ function obtenerIdYoutube($url) {
     <script src="codextwo.js"></script>
 </body>
 </html>
+
 
