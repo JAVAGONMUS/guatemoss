@@ -48,7 +48,7 @@ if ($zip->open($zipFile, ZipArchive::CREATE) !== TRUE) {
 
 // ➕ Agregar imágenes
 foreach ($fotos as $foto) {
-     $id   = $foto['ID_FOT'];   // antes era ID_FOTO
+    $id   = $foto['ID_FOT'];   // antes era ID_FOTO
     $nombre = $foto['NOMBRE'] ?: "foto_$id";
     $tipo   = $foto['TIPO_MIME'];
 
@@ -62,9 +62,13 @@ foreach ($fotos as $foto) {
 
 $zip->close();
 
+// 📥 Crear nombre dinámico para la descarga
+$fechaHora = date("d-m-Y,H:i:s");
+$nombreDescarga = "Guatemoss" . $fechaHora . ".zip";
+
 // 📥 Forzar descarga del ZIP
 header("Content-Type: application/zip");
-header("Content-Disposition: attachment; filename=fotos_catalogo.zip");
+header('Content-Disposition: attachment; filename="' . $nombreDescarga . '"');
 header("Content-Length: " . filesize($zipFile));
 readfile($zipFile);
 
