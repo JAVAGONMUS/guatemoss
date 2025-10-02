@@ -25,13 +25,11 @@ if (empty($idsArray)) {
 $placeholders = implode(",", array_fill(0, count($idsArray), "?"));
 
 // 📌 Consulta segura (corrigiendo ID_FOTO)
-$sql = "
-    SELECT ID_FOT, NOMBRE, FOTO, TIPO_MIME
-    FROM FOTOS
-    WHERE ID_FOT IN ($placeholders)
-      AND ID_EMPR = ?
-      AND TIPO_MIME LIKE 'image/%'
-";
+$sql = "SELECT ID_FOT, NOMBRE, FOTO, TIPO_MIME 
+        FROM FOTOS 
+        WHERE ID_FOT IN ($placeholders) 
+          AND ID_EMPR = ? 
+          AND TIPO_MIME LIKE 'image/%'";
 
 $params = array_merge($idsArray, [$idEmpresa]);
 
@@ -49,9 +47,17 @@ if ($zip->open($zipFile, ZipArchive::CREATE) !== TRUE) {
 }
 
 // ➕ Agregar imágenes
-foreach ($fotos as $row) {
-    $fileName = preg_replace('/[^A-Za-z0-9_\-\.]/', '_', $row['NOMBRE']);
-    $zip->addFromString($fileName, $row['FOTO']); // FOTO es BLOB
+foreach ($fotos as $foto) {
+     $id   = $foto['ID_FOT'];   // antes era ID_FOTO
+    $nombre = $foto['NOMBRE'] ?: "foto_$id";
+    $tipo   = $foto['TIPO_MIME'];
+
+    // Extensión según mime
+    $ext = explode('/', $tipo)[1] ?? 'jpg';
+    $filename = $nombre . "." . $ext;
+
+    // Agregar al ZIP
+    $zip->addFromString($filename, $foto['FOTO']);
 }
 
 $zip->close();
