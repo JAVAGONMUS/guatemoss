@@ -31,8 +31,8 @@ var_dump($idsArray);
 
 
 
-if (count(idsArray) === 0) {
-    die("No se recibieron IDs de fotos");
+if (empty($idsArray)) {
+    die("⚠️ No se recibieron IDs válidos para descargar.");
 }
 
 // 📌 Crear placeholders dinámicos (?, ?, ?)
@@ -82,6 +82,7 @@ readfile($zipFile);
 unlink($zipFile);
 exit;
 ?>
+
 
 
 
