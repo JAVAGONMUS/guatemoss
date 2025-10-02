@@ -308,5 +308,3 @@ function obtenerIdYoutube($url) {
     <script src="codextwo.js"></script>
 </body>
 </html>
-
-
