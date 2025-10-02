@@ -36,7 +36,7 @@ if (empty($idsArray)) {
 }
 
 // 📌 Crear placeholders dinámicos (?, ?, ?)
-$placeholders = implode(",", array_fill(0, count(idsArray), "?"));
+$placeholders = implode(",", array_fill(0, count($idsArray), "?"));
 
 // 📌 Construir consulta segura
 $sql = "
@@ -82,6 +82,7 @@ readfile($zipFile);
 unlink($zipFile);
 exit;
 ?>
+
 
 
 
