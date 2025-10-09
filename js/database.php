@@ -1,6 +1,6 @@
 <?php
 // database.php - Archivo único de conexión a la base de datos
-// Configuración de la base de datos para PHPMYADMIN
+// Configuración de la base de datos para RAILWAY
 define('DB_HOST', getenv('MYSQLHOST') ?: 'turntable.proxy.rlwy.net:47866');
 define('DB_USER', getenv('MYSQLUSER') ?: 'root');
 define('DB_PASS', getenv('MYSQLPASSWORD') ?: 'JRVMHEVvCjiiYNJetQIWQQIelcrMBTcm');
