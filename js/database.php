@@ -1,10 +1,10 @@
 <?php
 // database.php - Archivo único de conexión a la base de datos
 // Configuración de la base de datos para PHPMYADMIN
-define('DB_HOST', 'localhost');
-define('DB_USER', 'admin');
-define('DB_PASS', '');
-define('DB_NAME', 'sysmussa');
+define('DB_HOST', getenv('MYSQLHOST') ?: 'turntable.proxy.rlwy.net:47866');
+define('DB_USER', getenv('MYSQLUSER') ?: 'root');
+define('DB_PASS', getenv('MYSQLPASSWORD') ?: 'JRVMHEVvCjiiYNJetQIWQQIelcrMBTcm');
+define('DB_NAME', getenv('MYSQLDATABASE') ?: 'railway');
 
 // Función para obtener conexión a la base de datos
 function getDBConnection() {
