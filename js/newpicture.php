@@ -3,81 +3,17 @@ session_start();
 
 require_once 'database.php';
 
-// Protección modificada para permitir acceso directo solo a index.php
+// Protección modificada para permitir acceso directo solo a newpicture.php
 $archivo_actual = basename(__FILE__);
 if ($archivo_actual == basename($_SERVER["SCRIPT_FILENAME"]) && $archivo_actual != 'newpicture.php') {
     die("Acceso denegado.");
 }
 
-// Configuración para archivos grandes
-ini_set('upload_max_filesize', '50M');
-ini_set('post_max_size', '50M');
-ini_set('max_execution_time', '300');
-ini_set('memory_limit', '256M');
-
-
-
-// Funciones auxiliares
-function esEnlaceYouTubeValido($url) {
-    return filter_var($url, FILTER_VALIDATE_URL) && preg_match('/^https?:\/\//i', $url);
-}
-// Función para verificar si la URL está activa
-function urlEstaActiva($url) {
-    $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_NOBODY, true);
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-    curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0');
-    curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    return ($httpCode >= 200 && $httpCode < 400);
-}
-function esVideoYouTube($url) {
-    // Patrones para URLs de YouTube
-    $patrones = [
-        '/^https?:\/\/(?:www\.|m\.)?youtube\.com\/watch\?v=([a-zA-Z0-9_-]{11})/',
-        '/^https?:\/\/(?:www\.|m\.)?youtu\.be\/([a-zA-Z0-9_-]{11})/',
-        '/^https?:\/\/(?:www\.|m\.)?youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/',
-        '/^https?:\/\/(?:www\.|m\.)?youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/',
-        '/^https?:\/\/(?:www\.|m\.)?youtube\.com\/live\/([a-zA-Z0-9_-]{11})/'
-    ];
-    
-    foreach ($patrones as $patron) {
-        if (preg_match($patron, $url, $matches)) {
-            // Verificar que el ID del video tenga exactamente 11 caracteres
-            return strlen($matches[1]) === 11;
-        }
-    }
-    
-    return false;
-}
-
-function getUploadError($code) {
-    $errors = [
-        UPLOAD_ERR_INI_SIZE => 'El archivo excede el tamaño permitido',
-        UPLOAD_ERR_FORM_SIZE => 'El archivo excede el tamaño del formulario',
-        UPLOAD_ERR_PARTIAL => 'El archivo solo se subió parcialmente',
-        UPLOAD_ERR_NO_FILE => 'No se seleccionó ningún archivo',
-        UPLOAD_ERR_NO_TMP_DIR => 'Falta carpeta temporal',
-        UPLOAD_ERR_CANT_WRITE => 'Error al escribir en disco',
-        UPLOAD_ERR_EXTENSION => 'Subida detenida por extensión'
-    ];
-    return $errors[$code] ?? 'Error desconocido';
-}
-
-function getLastInsertId() {
-    $conn = getDBConnection();
-    return $conn->lastInsertId();
-}
 
 
 
 
-
-
-$mensaje = '';
-$error = '';
+$mensaje_error = "";
 
 // Configuración
 $password_correcto = "guatemoss"; // Cambia por tu contraseña
@@ -117,12 +53,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['password'])) {
     }
 }
 
+
+
+
+
+
 // Mostrar formulario de login
 mostrarFormularioLogin($mensaje_error ?? '');
 
 // Función para mostrar el formulario de login
-function mostrarFormularioLogin($error = '') {
-    $EMPR = "2";    
+function mostrarFormularioLogin($error = '') {       
     ?>
     <!DOCTYPE html>
     <html lang="es">
@@ -207,9 +147,87 @@ function mostrarFormularioLogin($error = '') {
     </html>
     <?php
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Función para mostrar el panel de administración
 function mostrarPanelAdmin() {
-    $EMPR = "2";
+    
+    // Configuración para archivos grandes
+    ini_set('upload_max_filesize', '50M');
+    ini_set('post_max_size', '50M');
+    ini_set('max_execution_time', '300');
+    ini_set('memory_limit', '256M');
+
+    // Funciones auxiliares
+    function esEnlaceYouTubeValido($url) {
+        return filter_var($url, FILTER_VALIDATE_URL) && preg_match('/^https?:\/\//i', $url);
+    }
+    // Función para verificar si la URL está activa
+    function urlEstaActiva($url) {
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_NOBODY, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0');
+        curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        return ($httpCode >= 200 && $httpCode < 400);
+    }
+    function esVideoYouTube($url) {
+        // Patrones para URLs de YouTube
+        $patrones = [
+            '/^https?:\/\/(?:www\.|m\.)?youtube\.com\/watch\?v=([a-zA-Z0-9_-]{11})/',
+            '/^https?:\/\/(?:www\.|m\.)?youtu\.be\/([a-zA-Z0-9_-]{11})/',
+            '/^https?:\/\/(?:www\.|m\.)?youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/',
+            '/^https?:\/\/(?:www\.|m\.)?youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/',
+            '/^https?:\/\/(?:www\.|m\.)?youtube\.com\/live\/([a-zA-Z0-9_-]{11})/'
+        ];
+        
+        foreach ($patrones as $patron) {
+            if (preg_match($patron, $url, $matches)) {
+                // Verificar que el ID del video tenga exactamente 11 caracteres
+                return strlen($matches[1]) === 11;
+            }
+        }
+        
+        return false;
+    }
+
+    function getUploadError($code) {
+        $errors = [
+            UPLOAD_ERR_INI_SIZE => 'El archivo excede el tamaño permitido',
+            UPLOAD_ERR_FORM_SIZE => 'El archivo excede el tamaño del formulario',
+            UPLOAD_ERR_PARTIAL => 'El archivo solo se subió parcialmente',
+            UPLOAD_ERR_NO_FILE => 'No se seleccionó ningún archivo',
+            UPLOAD_ERR_NO_TMP_DIR => 'Falta carpeta temporal',
+            UPLOAD_ERR_CANT_WRITE => 'Error al escribir en disco',
+            UPLOAD_ERR_EXTENSION => 'Subida detenida por extensión'
+        ];
+        return $errors[$code] ?? 'Error desconocido';
+    }
+
+    function getLastInsertId() {
+        $conn = getDBConnection();
+        return $conn->lastInsertId();
+    }
+
+
+    $EMPR = "2"; 
     $mensaje = '';
     $error = '';
 
@@ -272,6 +290,10 @@ function mostrarPanelAdmin() {
         }
     }
 
+    $HayArticulos = getDivisionesByEmpresa($EMPR);
+    $HayTipos = getDepartamentosByEmpresa($EMPR);
+    $HayMarcas = getCategoriasByEmpresa($EMPR);
+
     ?>
     <!DOCTYPE html>
     <html lang="es">
@@ -285,111 +307,135 @@ function mostrarPanelAdmin() {
     <body>
         <div class="logout">
             <a href="logout.php">Cerrar Sesión</a>
-        </div>
+        </div>      
+
         <div class="container">
             
-
-            <?php if ($mensaje): ?>
-                <div class="mensaje exito"><?php echo htmlspecialchars($mensaje); ?></div>
-            <?php endif; ?>            
-            <?php if ($error): ?>
-                <div class="mensaje error"><?php echo htmlspecialchars($error); ?></div>
-            <?php endif; ?>
-
-            <h1>Agregar Nuevo Contenido</h1> 
+            <h1>GUATE MOSS S.A.</h1> 
+            <h1>AGREGAR CONTENIDO AL CATALOGO</h1><br><br>
 
             <form id="productForm" enctype="multipart/form-data" method="POST" action="newpicture.php" >
-                <h2>Subir archivo (imagen o video):</h2>
+                <h2>ARCHIVO (imagen o video del producto):</h2>
                 <!-- Selector de archivos múltiple con vista previa -->
                 <div class="form-group">
-                    <label for="fileUpload">Fotografías del producto:</label>
+                    <label for="fileUpload">FOTOGRAFIAS DEL PRODUCTO</label>
                     <div id="fileInputsContainer">
                         <div class="file-input-container">
                             <input type="file" id="imagen" name="imagen" accept="image/*" class="file-input">
-                            <small>Formatos aceptados: JPG, PNG, GIF, WEBM (Máx. 20MB)</small>
+                            <small>formatos aceptados: JPG, PNG, GIF, WEBM (Máx. 20MB)</small>
                             <div class="preview-container">
                                 <div class="image-preview"></div>
                                 <label class="main-image-label">
-                                    <input type="radio" name="mainImage" value="0" class="main-image-radio"> Imagen principal
+                                    <input type="radio" name="mainImage" value="0" class="main-image-radio"> CARATULA/PORTADA
                                 </label>
                             </div>
                         </div>
                     </div>
-                    <button type="button" id="addFileBtn" class="add-file-btn">Agregar otra imagen</button>
+                    <button type="button" id="addFileBtn" class="add-youtube-btn">mas fotos..</button>
                     <div id="fileError" class="error-message"></div>
                 </div><br>
 
                 <!-- URLs de YouTube -->
                 <div class="form-group">            
-                    <label for="youtube_url">Enlace de YouTube:</label>
+                    <label for="youtube_url">ENLACE DE YOUTUBE</label>
                     <div id="youtubeUrlsContainer">
                         <div class="youtube-url-container">
                             <input type="url" id="youtube_url" name="youtube_url" class="youtube-url-input" placeholder="https://www.youtube.com/watch?v=...">
                         </div>
                     </div>
-                    <button type="button" id="addYoutubeUrlBtn" class="add-youtube-btn">Agregar otro video</button>
+                    <button type="button" id="addYoutubeUrlBtn" class="add-youtube-btn">mas videos..</button>
                     <div id="youtubeUrlError" class="error-message"></div>
-                </div><br><br>
+                </div><br><br><br>
+
+                <h2>DATOS (informacion del producto):</h2>
+
+
                 
+                
+
                 <!-- Selectores de categorías -->
                 <div class="flex-container">
                     <div class="form-group flex-item">
-                        <label for="division">División:</label>
+                        <label for="division">PRODUCTOS</label>
                         <select id="division" name="division" required>
-                            <option value="">Seleccione una división</option>
-                            <!-- Las opciones se llenarán dinámicamente -->
+                            <option value="">Seleccione...</option>
+                            <?php foreach ($HayArticulos as $articulo):?>
+                                <option value="<?php echo $articulo['ID_DIV']; ?>">
+                                    <?php echo htmlspecialchars($articulo['NOMBRE']); ?>
+                                </option>
+                            <?php endforeach; ?>
                         </select>
                         <div id="divisionError" class="error-message"></div>
                     </div>
                     
                     <div class="form-group flex-item">
-                        <label for="department">Departamento:</label>
+                        <label for="department">DISEÑOS</label>
                         <select id="department" name="department" required>
-                            <option value="">Seleccione un departamento</option>
-                            <!-- Las opciones se llenarán dinámicamente -->
+                            <option value="">Seleccione...</option>
+                            <?php foreach ($HayTipos as $tipo): ?>
+                                <option value="<?php echo $tipo['ID_DEP']; ?>">
+                                    <?php echo htmlspecialchars($tipo['NOMBRE']); ?>
+                                </option>
+                            <?php endforeach; ?>
                         </select>
                         <div id="departmentError" class="error-message"></div>
                     </div>
                     
                     <div class="form-group flex-item">
-                        <label for="category">Categoría:</label>
+                        <label for="category">MARCAS</label>
                         <select id="category" name="category" required>
-                            <option value="">Seleccione una categoría</option>
-                            <!-- Las opciones se llenarán dinámicamente -->
+                            <option value="">Seleccione...</option>
+                            <?php foreach ($HayMarcas as $marca): ?>
+                                <option value="<?php echo $marca['ID_CAT']; ?>">
+                                    <?php echo htmlspecialchars($marca['NOMBRE']); ?>
+                                </option>
+                            <?php endforeach; ?>
                         </select>
                         <div id="categoryError" class="error-message"></div>
                     </div>
                 </div>
 
-                <!-- Código UPC generado automáticamente -->
-                <div class="form-group">
-                    <label for="upcCode">Código UPC:</label>
-                    <input type="text" id="upcCode" name="upcCode" class="readonly" readonly>
-                    <div id="upcCodeError" class="error-message"></div>
-                </div>
+                <!-- El campo UPC ya no se muestra al usuario -->
+                <input type="hidden" id="upcCode" name="upcCode">
+
+
+
+
+
+
+
+
+
+
+
+
+
+                
+                
+
                 
                 <!-- Campos de datos del producto -->
                 <div class="form-group">
-                    <label for="description">Descripción del producto:</label>
+                    <label for="description">DESCRIPCION DEL PRODUCTO</label>
                     <input type="text" id="description" name="description" required>
                     <div id="descriptionError" class="error-message"></div>
                 </div>
 
                 <div class="flex-container">
                         <div class="form-group flex-item">
-                            <label for="model">Modelo del producto:</label>
+                            <label for="model">MODELO DEL PRODUCTO</label>
                             <input type="text" id="model" name="model" required>
                             <div id="modelError" class="error-message"></div>
                         </div>
                         
                         <div class="form-group flex-item">
-                            <label for="color">Color del producto:</label>
+                            <label for="color">COLOR DEL PRODUCTO</label>
                             <input type="text" id="color" name="color" required>
                             <div id="colorError" class="error-message"></div>
                         </div>
 
                         <div class="form-group">
-                            <label for="status">Estado del producto (1-10):</label>
+                            <label for="status">ESTADO DEL PRODUCTO (1-10)</label>
                             <input type="number" id="status" name="status" min="1" max="10" required class="status-input">
                             <div id="statusError" class="error-message"></div>
                         </div>
@@ -397,13 +443,13 @@ function mostrarPanelAdmin() {
 
                 <div class="flex-container">
                     <div class="form-group flex-item">
-                        <label for="retailUnits">Unidades por venta minorista:</label>
+                        <label for="retailUnits">UNIDADES DE VENTA MINORISTA</label>
                         <input type="number" id="retailUnits" name="retailUnits" min="1" required>
                         <div id="retailUnitsError" class="error-message"></div>
                     </div>
                     
                     <div class="form-group flex-item">
-                        <label for="wholesaleUnits">Unidades por venta mayorista:</label>
+                        <label for="wholesaleUnits">UNIDADES DE VENTA MAYORISTA</label>
                         <input type="number" id="wholesaleUnits" name="wholesaleUnits" min="1" required>
                         <div id="wholesaleUnitsError" class="error-message"></div>
                     </div>
@@ -411,26 +457,26 @@ function mostrarPanelAdmin() {
 
                 <div class="flex-container">
                     <div class="form-group flex-item">
-                        <label for="standardPrice">Precio estándar unidad:</label>
+                        <label for="standardPrice">PRECIO ESTANDAR * UNIDAD</label>
                         <input type="number" id="standardPrice" name="standardPrice" step="0.01" min="0" required>
                         <div id="standardPriceError" class="error-message"></div>
                     </div>
                     
                     <div class="form-group flex-item">
-                        <label for="offerPrice">Precio de oferta unidad:</label>
+                        <label for="offerPrice">PRECIO OFERTA * UNIDAD</label>
                         <input type="number" id="offerPrice" name="offerPrice" step="0.01" min="0">
                         <div id="offerPriceError" class="error-message"></div>
                     </div>
 
                     <div class="form-group">
-                        <label for="wholesalePrice">Precio por mayoreo:</label>
+                        <label for="wholesalePrice">PRECIO PARA MAYOREO</label>
                         <input type="number" id="wholesalePrice" name="wholesalePrice" step="0.01" min="0">
                         <div id="wholesalePriceError" class="error-message"></div>
                     </div>
                 </div>
 
-                <button type="submit" class="btn-submit">Guardar Contenido</button>
-            </form>
+                <button type="submit" class="add-file-btn">CREAR PRODUCTO</button>
+            </form><br><br>
 
             <div class="row">
                 <div class="col-lg-8 col-md-7 col-12 px-5 mb-3"> &copy; <?php echo date('Y'); ?> 
@@ -441,9 +487,19 @@ function mostrarPanelAdmin() {
                 </div>
             </div>
 
+        </div><br>
+
+        <div class="container">            
+
+            <?php if ($mensaje): ?>
+                <div class="mensaje exito"><?php echo htmlspecialchars($mensaje); ?></div>
+            <?php endif; ?>            
+            <?php if ($error): ?>
+                <div class="mensaje error"><?php echo htmlspecialchars($error); ?></div>
+            <?php endif; ?>
+
         </div>
 
-        <script src="script.js"></script>
         <script src="codexone.js"></script>
         <script src="codexthree.js"></script>
     </body>
