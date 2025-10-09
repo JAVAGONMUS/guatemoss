@@ -1,89 +1,4 @@
-// Datos de ejemplo para las categorías
-const divisiones = [
-    { id: '31', nombre: 'Electrónicos' },
-    { id: '32', nombre: 'Hogar' },
-    { id: '33', nombre: 'Ropa' }
-];
-
-const departamentos = [
-    { id: '55', nombre: 'Audio', divisionId: '31' },
-    { id: '56', nombre: 'Video', divisionId: '31' },
-    { id: '57', nombre: 'Cocina', divisionId: '32' },
-    { id: '58', nombre: 'Dormitorio', divisionId: '32' },
-    { id: '59', nombre: 'Caballero', divisionId: '33' },
-    { id: '60', nombre: 'Dama', divisionId: '33' }
-];
-
-const categorias = [
-    { id: '200', nombre: 'Auriculares', departamentoId: '55' },
-    { id: '201', nombre: 'Altavoces', departamentoId: '55' },
-    { id: '202', nombre: 'Televisores', departamentoId: '56' },
-    { id: '203', nombre: 'Reproductores', departamentoId: '56' },
-    { id: '204', nombre: 'Utensilios', departamentoId: '57' },
-    { id: '205', nombre: 'Electrodomésticos', departamentoId: '57' },
-    { id: '206', nombre: 'Sábanas', departamentoId: '58' },
-    { id: '207', nombre: 'Almohadas', departamentoId: '58' },
-    { id: '208', nombre: 'Camisas', departamentoId: '59' },
-    { id: '209', nombre: 'Pantalones', departamentoId: '59' },
-    { id: '210', nombre: 'Vestidos', departamentoId: '60' },
-    { id: '211', nombre: 'Blusas', departamentoId: '60' }
-];
-
-// Contador de productos para el código UPC
-let productCount = 1;
-
 document.addEventListener('DOMContentLoaded', function() {
-    // Llenar los selectores con las opciones
-    const divisionSelect = document.getElementById('division');
-    const departmentSelect = document.getElementById('department');
-    const categorySelect = document.getElementById('category');
-    
-    // Llenar división
-    divisiones.forEach(division => {
-        const option = document.createElement('option');
-        option.value = division.id;
-        option.textContent = `${division.id} - ${division.nombre}`;
-        divisionSelect.appendChild(option);
-    });
-    
-    // Manejar cambios en los selectores para actualizar dependientes
-    divisionSelect.addEventListener('change', function() {
-        // Limpiar y actualizar departamentos
-        departmentSelect.innerHTML = '<option value="">Seleccione un departamento</option>';
-        categorySelect.innerHTML = '<option value="">Seleccione una categoría</option>';
-        
-        if (this.value) {
-            const filteredDepartments = departamentos.filter(dept => dept.divisionId === this.value);
-            filteredDepartments.forEach(dept => {
-                const option = document.createElement('option');
-                option.value = dept.id;
-                option.textContent = `${dept.id} - ${dept.nombre}`;
-                departmentSelect.appendChild(option);
-            });
-        }
-        
-        updateUPCCode();
-    });
-    
-    departmentSelect.addEventListener('change', function() {
-        // Limpiar y actualizar categorías
-        categorySelect.innerHTML = '<option value="">Seleccione una categoría</option>';
-        
-        if (this.value) {
-            const filteredCategories = categorias.filter(cat => cat.departamentoId === this.value);
-            filteredCategories.forEach(cat => {
-                const option = document.createElement('option');
-                option.value = cat.id;
-                option.textContent = `${cat.id} - ${cat.nombre}`;
-                categorySelect.appendChild(option);
-            });
-        }
-        
-        updateUPCCode();
-    });
-    
-    categorySelect.addEventListener('change', updateUPCCode);
-    
     // Funcionalidad para agregar más selectores de archivos
     const addFileBtn = document.getElementById('addFileBtn');
     const fileInputsContainer = document.getElementById('fileInputsContainer');
@@ -123,28 +38,11 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Validar formulario
         if (validateForm()) {
-            // En un caso real, aquí enviaríamos los datos al servidor
-            alert('Formulario válido. En un caso real, los datos se enviarían al servidor.');
-            // form.submit();
+            // Si pasa la validación, enviar el formulario
+            this.submit();
         }
     });
 });
-
-// Función para generar el código UPC
-function updateUPCCode() {
-    const division = document.getElementById('division').value;
-    const department = document.getElementById('department').value;
-    const category = document.getElementById('category').value;
-    
-    if (division && department && category) {
-        // En un caso real, el contador vendría de la base de datos
-        const countStr = String(productCount).padStart(5, '0');
-        const upcCode = division + department + category + countStr;
-        document.getElementById('upcCode').value = upcCode;
-    } else {
-        document.getElementById('upcCode').value = '';
-    }
-}
 
 // Función para agregar un nuevo selector de archivos
 function addFileInput() {
@@ -285,12 +183,10 @@ function validateForm() {
     
     // Validar que al menos una imagen esté marcada como principal
     const mainImageSelected = document.querySelector('input[name="mainImage"]:checked');
-    if (!mainImageSelected) {
-        // Si hay imágenes pero ninguna está marcada como principal, marcar la primera automáticamente
-        const firstRadio = document.querySelector('input[name="mainImage"]');
-        if (firstRadio) {
-            firstRadio.checked = true;
-        }
+    if (!mainImageSelected && hasFiles) {
+        document.getElementById('fileError').textContent = 'Debe seleccionar una imagen como principal';
+        document.getElementById('fileError').style.display = 'block';
+        isValid = false;
     }
     
     // Validar URLs de YouTube (si existen)
