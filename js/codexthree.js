@@ -53,12 +53,13 @@ function addFileInput() {
     newFileInput.className = 'file-input-container';
     newFileInput.innerHTML = `
         <input type="file" name="productImages[]" accept="image/*" class="file-input">
+        <small>formatos aceptados: JPG, PNG, GIF, WEBM (Máx. 20MB)</small>
         <div class="preview-container">
             <div class="image-preview">
                 <div class="placeholder">Vista previa</div>
             </div>
             <label class="main-image-label">
-                <input type="radio" name="mainImage" value="${index}" class="main-image-radio"> Imagen principal
+                <input type="radio" name="mainImage" value="${index}" class="main-image-radio"> CARATULA/PORTADA
             </label>
         </div>
         <button type="button" class="remove-file-btn">Eliminar</button>
@@ -184,7 +185,7 @@ function validateForm() {
     // Validar que al menos una imagen esté marcada como principal
     const mainImageSelected = document.querySelector('input[name="mainImage"]:checked');
     if (!mainImageSelected && hasFiles) {
-        document.getElementById('fileError').textContent = 'Debe seleccionar una imagen como principal';
+        document.getElementById('fileError').textContent = 'Debe seleccionar una imagen como principal, portada o caratula del producto';
         document.getElementById('fileError').style.display = 'block';
         isValid = false;
     }
